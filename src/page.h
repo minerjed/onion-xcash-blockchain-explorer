@@ -393,7 +393,7 @@ struct tx_details
                 {"payment_id"        , pod_to_hex(payment_id)},
                 {"confirmations"     , no_confirmations},
                 {"extra"             , get_extra_str()},
-                {"extra_pub_tx"      , get_extra_public_tx_str(extra)},
+                {"extra_pub_tx"      , get_extra_public_tx_str()},
                 {"payment_id8"       , pod_to_hex(payment_id8)},
                 {"unlock_time"       , unlock_time},
                 {"tx_size"           , fmt::format("{:0.4f}", tx_size)},
