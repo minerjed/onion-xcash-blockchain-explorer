@@ -326,6 +326,7 @@ struct tx_details
     uint64_t unlock_time;
     uint64_t no_confirmations;
     vector<uint8_t> extra;
+    vector<uint8_t> extra_pub_tx;
 
     crypto::hash  payment_id  = null_hash; // normal
     crypto::hash8 payment_id8 = null_hash8; // encrypted
