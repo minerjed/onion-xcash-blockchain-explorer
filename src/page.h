@@ -393,12 +393,12 @@ struct tx_details
                 {"payment_id"        , pod_to_hex(payment_id)},
                 {"confirmations"     , no_confirmations},
                 {"extra"             , get_extra_str()},
+                {"extra_pub_tx"      , get_extra_public_tx_str(extra)},
                 {"payment_id8"       , pod_to_hex(payment_id8)},
                 {"unlock_time"       , unlock_time},
                 {"tx_size"           , fmt::format("{:0.4f}", tx_size)},
                 {"tx_size_short"     , fmt::format("{:0.2f}", tx_size)},
-                {"has_add_pks"       , !additional_pks.empty()},
-                {"extra_pub_tx"      , get_extra_public_tx_str(extra)}
+                {"has_add_pks"       , !additional_pks.empty()}
         };
 
 
@@ -413,7 +413,7 @@ struct tx_details
     }
 
     string
-    get_extra_public_tx_str(const std::vector<uint8_t>& tx_extra) const
+    get_extra_public_tx_str() const
     {  
         cout << "extra" << std::endl;
         std::string tx_extra_str(tx_extra.begin(), tx_extra.end());
@@ -5986,6 +5986,7 @@ get_tx_json(const transaction& tx, const tx_details& txd)
             {"coinbase"    , is_coinbase(tx)},
             {"mixin"       , txd.mixin_no},
             {"extra"       , txd.get_extra_str()},
+            {"extra_pub_tx", get_extra_public_tx_str()},
             {"payment_id"  , (txd.payment_id  != null_hash  ? pod_to_hex(txd.payment_id)  : "")},
             {"payment_id8" , (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")},
     };
