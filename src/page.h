@@ -397,7 +397,7 @@ struct tx_details
                 {"tx_size"           , fmt::format("{:0.4f}", tx_size)},
                 {"tx_size_short"     , fmt::format("{:0.2f}", tx_size)},
                 {"has_add_pks"       , !additional_pks.empty()},
-                {"extra_pub_tx"      , get_extra_public_tx_scr()}
+                {"extra_pub_tx"      , get_extra_public_tx_str()}
         };
 
 
