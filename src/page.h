@@ -407,7 +407,7 @@ struct tx_details
     string
     get_extra_str() const
     {
-        cout << "mempool status txs: " << epee::string_tools::buff_to_hex_nodelimer(
+        cout << "extra: " << epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char*>(extra.data()), extra.size()});
         return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char*>(extra.data()), extra.size()});
