@@ -415,7 +415,7 @@ struct tx_details
     get_extra_public_tx_str() const
     {
         return epee::string_tools::buff_to_hex_nodelimer(
-            string{reinterpret_cast<const char*>(extra_pub_tx.data()), extra_pub_tx.size()});
+                string{reinterpret_cast<const char*>(extra.data()), extra.size()});
     }
 
     mstch::array
