@@ -5986,9 +5986,9 @@ get_tx_json(const transaction& tx, const tx_details& txd)
             {"coinbase"    , is_coinbase(tx)},
             {"mixin"       , txd.mixin_no},
             {"extra"       , txd.get_extra_str()},
-            {"extra_pub_tx", get_extra_public_tx_str()},
+            {"extra_pub_tx", txd.get_extra_public_tx_str()},
             {"payment_id"  , (txd.payment_id  != null_hash  ? pod_to_hex(txd.payment_id)  : "")},
-            {"payment_id8" , (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")},
+            {"payment_id8" , (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}
     };
 
     return j_tx;
