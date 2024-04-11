@@ -416,10 +416,10 @@ struct tx_details
     get_extra_public_tx_str() const
     {  
         cout << "extra" << std::endl;
-        std::string tx_extra_str(tx_extra.begin(), tx_extra.end());
+        std::string tx_extra_str(extra.begin(), extra.end());
         std::cout << tx_extra_str << std::endl;
         return epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char*>(tx_extra.data()), tx_extra.size()});
+                string{reinterpret_cast<const char*>(extra.data()), extra.size()});
     }
 
     mstch::array
