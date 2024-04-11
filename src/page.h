@@ -445,10 +445,15 @@ namespace xmreg
                 }
                 else
                 {
-                    // Assuming this is the transaction key in hex
-                    crypto::public_key tx_key;
-                    epee::string_tools::hex_to_pod(item, tx_key);
-                    std::cout << "Transaction Key: " << item << std::endl;
+                    // Convert binary data to hexadecimal string for display
+                    std::stringstream hex_stream;
+                    hex_stream << std::hex << std::setfill('0');
+                    for (unsigned char byte : item)
+                    {
+                        hex_stream << std::setw(2) << static_cast<int>(byte);
+                    }
+                    std::string hex_str = hex_stream.str();
+                    std::cout << "Transaction Key: " << hex_str << std::endl;
                 }
             }
 
