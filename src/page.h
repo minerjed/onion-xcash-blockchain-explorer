@@ -397,7 +397,7 @@ struct tx_details
                 {"tx_size"           , fmt::format("{:0.4f}", tx_size)},
                 {"tx_size_short"     , fmt::format("{:0.2f}", tx_size)},
                 {"has_add_pks"       , !additional_pks.empty()},
-                {"extra_pub_tx"      , get_extra_public_tx_str()}
+                {"extra_pub_tx"      , get_extra_public_tx_str(extra)}
         };
 
 
@@ -412,10 +412,10 @@ struct tx_details
     }
 
     string
-    get_extra_public_tx_str() const
-    {
+    get_extra_public_tx_str(const std::vector<uint8_t>& tx_extra) const
+    {   std::string tx_extra_str(tx_extra.begin(), tx_extra.end());
         return epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char*>(extra.data()), extra.size()});
+                string{reinterpret_cast<const char*>(tx_extra.data()), tx_extra.size()});
     }
 
     mstch::array
