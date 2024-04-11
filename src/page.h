@@ -417,7 +417,27 @@ struct tx_details
     {  
         cout << "extra" << std::endl;
         std::string tx_extra_str(extra.begin(), extra.end());
-        std::cout << tx_extra_str << std::endl;
+        size_t pos = 0;
+        std::string delimiter = "|";
+        std::vector<std::string> items;
+        // Split the string by '|'
+        while ((pos = tx_extra_str.find(delimiter)) != std::string::npos) {
+            items.push_back(tx_extra_str.substr(0, pos));
+            tx_extra_str.erase(0, pos + delimiter.length());
+        }
+    
+
+
+        // Add the last part of string after the last delimiter
+        items.push_back(tx_extra_str);
+
+        // Print all items found
+        for (const auto& item : items) {
+            cout << "Found item: " << item << std::endl;
+        }
+
+
+
         return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char*>(extra.data()), extra.size()});
     }
