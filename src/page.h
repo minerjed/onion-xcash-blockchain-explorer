@@ -414,7 +414,8 @@ struct tx_details
 
     string
     get_extra_public_tx_str(const std::vector<uint8_t>& tx_extra) const
-    {
+    {  
+        cout << "extra" << std::endl;
         std::string tx_extra_str(tx_extra.begin(), tx_extra.end());
         std::cout << tx_extra_str << std::endl;
         return epee::string_tools::buff_to_hex_nodelimer(
