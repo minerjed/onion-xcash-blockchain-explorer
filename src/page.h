@@ -420,10 +420,10 @@ namespace xmreg
             // Add the last part of string after the last delimiter
             items.push_back(tx_extra_str);
 
-//            for (const auto &item : items)
-//            {
-//                cout << "Found item: " << item << std::endl;
-//            }
+            //            for (const auto &item : items)
+            //            {
+            //                cout << "Found item: " << item << std::endl;
+            //            }
 
             // Process each item from the split
             for (const auto &item : items)
@@ -431,14 +431,13 @@ namespace xmreg
                 if (item.empty())
                     continue;
 
-                if (item.substr(0, XCASH_SIGN_DATA_PREFIX.size()) == XCASH_SIGN_DATA_PREFIX)
+                if (item.substr(0, strlen(XCASH_SIGN_DATA_PREFIX)) == XCASH_SIGN_DATA_PREFIX)
                 {
-                    std::string encoded_sig = item.substr(XCASH_SIGN_DATA_PREFIX.size());
+                    std::string encoded_sig = item.substr(strlen(XCASH_SIGN_DATA_PREFIX));
                     std::string decoded_sig;
                     if (!tools::base58::decode(encoded_sig, decoded_sig))
                     {
                         std::cerr << "Failed to decode Base58 signature" << std::endl;
-                        return false;
                     }
                     crypto::signature sig;
                     std::memcpy(&sig, decoded_sig.data(), sizeof(sig));
