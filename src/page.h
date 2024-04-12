@@ -400,7 +400,7 @@ namespace xmreg
         {
             std::string testxxx = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            cout << "Binary Data as String: " << testxxx << std::endl
+            cout << "Binary Data as String: " << testxxx << std::endl;
 
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
