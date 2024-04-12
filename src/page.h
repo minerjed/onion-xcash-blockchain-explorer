@@ -10,6 +10,7 @@
 #include "monero_headers.h"
 #include "randomx.h"
 #include "common.hpp"
+#include "common/base58.h"
 #include "blake2/blake2.h"
 #include "virtual_machine.hpp"
 #include "program.hpp"
@@ -418,13 +419,19 @@ namespace xmreg
         {
             std::string ascii;
             ascii.reserve(hex.length() / 2);
-            for (size_t i = 0; i < hex.length(); i += 2)
+            size_t i = 0;
+            for (; i < hex.length() - 1; i += 2)
             {
                 std::string part = hex.substr(i, 2);
                 char high = hex_char_to_int(part[0]);
                 char low = hex_char_to_int(part[1]);
                 char value = (high << 4) | low;
                 ascii.push_back(value);
+            }
+            if (hex.length() % 2 != 0)
+            { // Handle the last single hex digit if the length is odd
+                char high = hex_char_to_int(hex[i]);
+                ascii.push_back((high << 4)); // This assumes the low nibble is 0
             }
             return ascii;
         }
@@ -437,8 +444,15 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
-            std::string asciiString = hex_to_ascii(wsextra);
-            cout << "ASCII String: " << asciiString << endl;
+            try
+            {
+                std::string ascii_str = hex_to_ascii(wsextra);
+                std::cout << "ASCII String: " << ascii_str << std::endl;
+            }
+            catch (const std::invalid_argument &e)
+            {
+                std::cout << "Error: " << e.what() << std::endl;
+            }
 
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
