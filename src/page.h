@@ -317,6 +317,17 @@ namespace xmreg
 
         bool has_additional_tx_pub_keys{false};
 
+        int hex_char_to_int(char c) const
+        {
+            if (c >= '0' && c <= '9')
+                return c - '0';
+            if (c >= 'a' && c <= 'f')
+                return 10 + (c - 'a');
+            if (c >= 'A' && c <= 'F')
+                return 10 + (c - 'A');
+            throw std::invalid_argument("Invalid hexadecimal character");
+        }
+
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
