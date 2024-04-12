@@ -424,77 +424,11 @@ namespace xmreg
             cout << "extra" << std::endl;
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            cout << "Binary Data as String: " << testxxx << std::endl;
-
+            cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
             std::string asciiString = hex_to_ascii(wsextra);
             cout << "ASCII String: " << asciiString << endl;
 
-            //            std::string binaryAsString{reinterpret_cast<const char *>(extra.data()), extra.size()};
-            //            cout << "Binary Data as String: " << binaryAsString << std::endl;
-
-            /*            std::string hex_to_string(const std::string &hex)
-                        {
-                            std::string output;
-                            output.reserve(hex.length() / 2);
-                            for (size_t i = 0; i < hex.length(); i += 2)
-                            {
-                                std::string part = hex.substr(i, 2);
-                                char ch = static_cast<char>(std::stoi(part, nullptr, 16));
-                                output.push_back(ch);
-                            }
-
-                            std::string tx_extra_str(extra.begin(), extra.end());
-                            size_t pos = 0;
-                            std::string delimiter = "|";
-                            std::vector<std::string> items;
-                            // Split the string by '|'
-                            while ((pos = tx_extra_str.find(delimiter)) != std::string::npos)
-                            {
-                                items.push_back(tx_extra_str.substr(0, pos));
-                                tx_extra_str.erase(0, pos + delimiter.length());
-                            }
-
-                            // Add the last part of string after the last delimiter
-                            items.push_back(tx_extra_str);
-
-                            //            for (const auto &item : items)
-                            //            {
-                            //                cout << "Found item: " << item << std::endl;
-                            //            }
-
-                            // Process each item from the split
-                            for (const auto &item : items)
-                            {
-                                if (item.empty())
-                                    continue;
-
-                                if (item.substr(0, strlen(XCASH_SIGN_DATA_PREFIX)) == XCASH_SIGN_DATA_PREFIX)
-                                {
-                                    std::string encoded_sig = item.substr(strlen(XCASH_SIGN_DATA_PREFIX));
-                                    std::string decoded_sig;
-                                    if (!tools::base58::decode(encoded_sig, decoded_sig))
-                                    {
-                                        std::cerr << "Failed to decode Base58 signature" << std::endl;
-                                    }
-                                    crypto::signature sig;
-                                    std::memcpy(&sig, decoded_sig.data(), sizeof(sig));
-                                    // Optionally verify signature here
-                                }
-                                else
-                                {
-                                    // Convert binary data to hexadecimal string for display
-                                    std::stringstream hex_stream;
-                                    hex_stream << std::hex << std::setfill('0');
-                                    for (unsigned char byte : item)
-                                    {
-                                        hex_stream << std::setw(2) << static_cast<int>(byte);
-                                    }
-                                    std::string hex_str = hex_stream.str();
-                                    std::cout << "Transaction Key: " << hex_str << std::endl;
-                                }
-                            }
-            */
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
