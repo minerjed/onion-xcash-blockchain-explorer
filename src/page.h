@@ -5999,7 +5999,7 @@ namespace xmreg
                     {"payment_id", pid_str},
                     {"payment_id8", pid8_str},
                     {"extra", txd.get_extra_str()},
-                    {"extra_pub_tx", get_extra_public_tx_str()},
+                    {"extra_pub_tx", txd.get_extra_public_tx_str()},
                     {"with_ring_signatures", static_cast<bool>(
                                                  with_ring_signatures)},
                     {"tx_json", tx_json},
