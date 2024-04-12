@@ -407,7 +407,7 @@ namespace xmreg
         {
             cout << "extra" << std::endl;
             std::string binaryAsString{reinterpret_cast<const char *>(extra.data()), extra.size()};
-            logFile << "Binary Data as String: " << binaryAsString << std::endl;
+            cout << "Binary Data as String: " << binaryAsString << std::endl;
 
 
 
@@ -476,7 +476,7 @@ namespace xmreg
                 return epee::string_tools::buff_to_hex_nodelimer(
                     string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             }
-            
+
             mstch::array
             get_ring_sig_for_input(uint64_t in_i)
             {
