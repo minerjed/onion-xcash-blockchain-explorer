@@ -436,18 +436,15 @@ namespace xmreg
             return ascii;
         }
 
-        std::vector<std::string> extract_between_pipes(const std::string &str)
-        {
+        std::vector<std::string> extract_between_pipes(const std::string &str) const {
             std::vector<std::string> results;
             size_t start = 0;
             size_t end = 0;
 
-            while ((start = str.find('|', end)) != std::string::npos)
-            {
+            while ((start = str.find('|', end)) != std::string::npos) {
                 start++; // Move past the current '|'
                 end = str.find('|', start);
-                if (end == std::string::npos)
-                    break; // If there's no closing '|', exit
+                if (end == std::string::npos) break; // If there's no closing '|', exit
                 results.push_back(str.substr(start, end - start));
             }
 
