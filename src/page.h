@@ -436,6 +436,24 @@ namespace xmreg
             return ascii;
         }
 
+        std::vector<std::string> extract_between_pipes(const std::string &str)
+        {
+            std::vector<std::string> results;
+            size_t start = 0;
+            size_t end = 0;
+
+            while ((start = str.find('|', end)) != std::string::npos)
+            {
+                start++; // Move past the current '|'
+                end = str.find('|', start);
+                if (end == std::string::npos)
+                    break; // If there's no closing '|', exit
+                results.push_back(str.substr(start, end - start));
+            }
+
+            return results;
+        }
+
         string
         get_extra_public_tx_str() const
         {
@@ -448,12 +466,18 @@ namespace xmreg
             {
                 std::string ascii_str = hex_to_ascii(wsextra);
                 std::cout << "ASCII String: " << ascii_str << std::endl;
+
+                // Extract substrings between '|'
+                vector<string> extracted_strings = extract_between_pipes(ascii_str);
+                for (const auto &item : extracted_strings)
+                {
+                    cout << "Extracted Item: " << item << endl;
+                }
             }
             catch (const std::invalid_argument &e)
             {
                 std::cout << "Error: " << e.what() << std::endl;
             }
-
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
