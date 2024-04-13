@@ -482,26 +482,27 @@ namespace xmreg
                 if (pos != std::string::npos)
                 {
                     char wtarget = '|';
-                    size_t wend = ascii_str.size();
+                    size_t wstart = ascii_str.size();
                     int count = 0;
-                    while (count < 7 && wend != std::string::npos)
+                    while (count < 7 && wstart != std::string::npos)
                     {
-                        wend = ascii_str.rfind(wtarget, wend - 1); // Move the position back for the next search
+                        wstart = ascii_str.rfind(wtarget, wstart - 1); // Move the position back for the next search
                         count++;
                     }
-                    if (wend != std::string::npos)
+                    if (wstart != std::string::npos)
                     {
                         std::cout << "The 7th occurrence of '" << wtarget
-                                  << "' from the end is at position: " << wend << std::endl;
+                                  << "' from the end is at position: " << wstart << std::endl;
                     }
                     else
                     {
                         std::cout << "Less than 7 occurrences of '" << wtarget
                                   << "' were found." << std::endl;
                     }
+                    // Extract substrings between '|' at starting position wstart - 1
+                    std::string modified_str = ascii_str.substr(wstart - 1);
 
-                    // Extract substrings between '|'
-                    vector<string> extracted_strings = extract_between_pipes(ascii_str);
+                    vector<string> extracted_strings = extract_between_pipes(modified_str);
                     for (const auto &item : extracted_strings)
                     {
                         cout << "Extracted Item: " << item << endl;
