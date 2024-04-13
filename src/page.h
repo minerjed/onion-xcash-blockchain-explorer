@@ -451,7 +451,6 @@ namespace xmreg
             std::vector<std::string> results;
             size_t start = 0;
             size_t end = 0;
-
             while ((start = str.find('|', end)) != std::string::npos)
             {
                 start++; // Move past the current '|'
@@ -460,23 +459,21 @@ namespace xmreg
                     break; // If there's no closing '|', exit
                 results.push_back(str.substr(start, end - start));
             }
-
             return results;
         }
 
         string
         get_extra_public_tx_str() const
         {
-            cout << "extra" << std::endl;
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            cout << "Binary Data as String: " << wsextra << std::endl;
+//            cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
             bool firstTime = true;
             try
             {
                 std::string ascii_str = hex_to_ascii(wsextra);
-                std::cout << "ASCII String: " << ascii_str << std::endl;
+//                std::cout << "ASCII String: " << ascii_str << std::endl;
                 size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
                 // This is a public transaction
                 if (pos != std::string::npos)
@@ -491,8 +488,8 @@ namespace xmreg
                     }
                     if (wstart != std::string::npos)
                     {
-                        std::cout << "The 7th occurrence of '" << wtarget
-                                  << "' from the end is at position: " << wstart << std::endl;
+//                        std::cout << "The 7th occurrence of '" << wtarget
+//                                  << "' from the end is at position: " << wstart << std::endl;
                     }
                     else
                     {
