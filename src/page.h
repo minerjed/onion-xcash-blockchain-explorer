@@ -472,7 +472,7 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
-            bool firstTime = false;
+            bool firstTime = true;
             try
             {
                 std::string ascii_str = hex_to_ascii(wsextra);
@@ -480,13 +480,7 @@ namespace xmreg
 
                 // This is a public transaction
                 size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
-                std::cout << "Pos: " << pos << std::endl;
-                std::cout << "nPos: " << std::string::npos << std::endl;
                 if (pos != std::string::npos)
-                {
-                    std::vector<std::string> extracted_strings = std::vector<std::string>();
-                }
-                else
                 {
                     // Extract substrings between '|'
                     vector<string> extracted_strings = extract_between_pipes(ascii_str);
@@ -494,11 +488,13 @@ namespace xmreg
                     {
                         cout << "Extracted Item: " << item << endl;
                         if (firstTime) {
-                            firstTime = true;
+                            firstTime = false;
                             std::string hex_output = ascii_to_hex(item);
                             std::cout << "Converted Hex String: " << hex_output << std::endl;
                         }
                     }
+                } else {                                    {
+                    std::vector<std::string> extracted_strings = std::vector<std::string>();
                 }
             }
             catch (const std::invalid_argument &e)
