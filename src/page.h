@@ -481,6 +481,8 @@ namespace xmreg
                 // This is a public transaction
                 if (pos != std::string::npos)
                 {
+                    size_t pos2 = ascii_str.find("|");
+                    std::cout << "Pos2: " << pos2 << std::endl;
                     // Extract substrings between '|'
                     vector<string> extracted_strings = extract_between_pipes(ascii_str);
                     for (const auto &item : extracted_strings)
