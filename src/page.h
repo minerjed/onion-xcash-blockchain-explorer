@@ -436,15 +436,28 @@ namespace xmreg
             return ascii;
         }
 
-        std::vector<std::string> extract_between_pipes(const std::string &str) const {
+        std::string ascii_to_hex(const std::string &ascii_str) const
+        {
+            std::stringstream hex_str;
+            for (unsigned char c : ascii_str)
+            {
+                hex_str << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(c);
+            }
+            return hex_str.str();
+        }
+
+        std::vector<std::string> extract_between_pipes(const std::string &str) const
+        {
             std::vector<std::string> results;
             size_t start = 0;
             size_t end = 0;
 
-            while ((start = str.find('|', end)) != std::string::npos) {
+            while ((start = str.find('|', end)) != std::string::npos)
+            {
                 start++; // Move past the current '|'
                 end = str.find('|', start);
-                if (end == std::string::npos) break; // If there's no closing '|', exit
+                if (end == std::string::npos)
+                    break; // If there's no closing '|', exit
                 results.push_back(str.substr(start, end - start));
             }
 
@@ -459,16 +472,31 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
+            bool firstTime = false;
             try
             {
                 std::string ascii_str = hex_to_ascii(wsextra);
                 std::cout << "ASCII String: " << ascii_str << std::endl;
 
-                // Extract substrings between '|'
-                vector<string> extracted_strings = extract_between_pipes(ascii_str);
-                for (const auto &item : extracted_strings)
+                // This is a public transaction
+                size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
+                if (pos != std::string::npos)
                 {
-                    cout << "Extracted Item: " << item << endl;
+                    std::vector<std::string> extracted_strings = std::vector<std::string>();
+                }
+                else
+                {
+                    // Extract substrings between '|'
+                    vector<string> extracted_strings = extract_between_pipes(ascii_str);
+                    for (const auto &item : extracted_strings)
+                    {
+                        cout << "Extracted Item: " << item << endl;
+                        if (firstTime) {
+                            firstTime = true;
+                            std::string hex_output = ascii_to_hex(item);
+                            std::cout << "Converted Hex String: " << hex_output << std::endl;
+                        }
+                    }
                 }
             }
             catch (const std::invalid_argument &e)
