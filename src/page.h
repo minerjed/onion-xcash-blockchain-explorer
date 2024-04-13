@@ -481,22 +481,22 @@ namespace xmreg
                 // This is a public transaction
                 if (pos != std::string::npos)
                 {
-                    char target = '|';
-                    size_t wend = text.size();
+                    char wtarget = '|';
+                    size_t wend = ascii_str.size();
                     int count = 0;
                     while (count < 7 && wend != std::string::npos)
                     {
-                        wend = text.rfind(target, wend - 1); // Move the position back for the next search
+                        wend = ascii_str.rfind(wtarget, wend - 1); // Move the position back for the next search
                         count++;
                     }
                     if (wend != std::string::npos)
                     {
-                        std::cout << "The 7th occurrence of '" << target
+                        std::cout << "The 7th occurrence of '" << wtarget
                                   << "' from the end is at position: " << wend << std::endl;
                     }
                     else
                     {
-                        std::cout << "Less than 7 occurrences of '" << target
+                        std::cout << "Less than 7 occurrences of '" << wtarget
                                   << "' were found." << std::endl;
                     }
 
