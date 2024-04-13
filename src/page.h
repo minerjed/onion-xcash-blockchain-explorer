@@ -480,6 +480,8 @@ namespace xmreg
 
                 // This is a public transaction
                 size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
+                std::cout << "Pos: " << pos << std::endl;
+                std::cout << "nPos: " << std::string::npos << std::endl;
                 if (pos != std::string::npos)
                 {
                     std::vector<std::string> extracted_strings = std::vector<std::string>();
