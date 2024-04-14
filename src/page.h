@@ -417,6 +417,7 @@ namespace xmreg
         // Function to convert a hex string to an ASCII string
         std::string hex_to_ascii(const std::string &hex) const
         {
+            std::vector<tx_extra_field> tx_extra_fields;
             std::string ascii;
             ascii.reserve(hex.length() / 2);
             size_t i = 0;
@@ -465,6 +466,17 @@ namespace xmreg
         string
         get_extra_public_tx_str() const
         {
+
+            std::vector<tx_extra_field> tx_extra_fields;
+            parse_tx_extra(tx_extra, tx_extra_fields);
+
+
+            // find corresponding field
+//            tx_extra_additional_pub_keys additional_pub_keys;
+//            if (!find_tx_extra_field_by_type(tx_extra_fields, additional_pub_keys))
+//                return {};
+//            return additional_pub_keys.data;
+
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             cout << "Binary Data as String: " << wsextra << std::endl;
@@ -488,8 +500,8 @@ namespace xmreg
                     }
                     if (wstart != std::string::npos)
                     {
-//                        std::cout << "The 7th occurrence of '" << wtarget
-//                                  << "' from the end is at position: " << wstart << std::endl;
+                        //                        std::cout << "The 7th occurrence of '" << wtarget
+                        //                                  << "' from the end is at position: " << wstart << std::endl;
                     }
                     else
                     {
