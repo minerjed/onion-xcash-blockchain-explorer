@@ -475,6 +475,7 @@ namespace xmreg
                 std::cerr << "Failed to parse tx extra" << std::endl;
             } else {
                 cout << "Length: " << tx_extra_fields.size() << std::endl;
+                cout << "Data: " << tx_extra_fields.data() << std::endl;
             }
 
 
