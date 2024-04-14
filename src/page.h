@@ -417,7 +417,6 @@ namespace xmreg
         // Function to convert a hex string to an ASCII string
         std::string hex_to_ascii(const std::string &hex) const
         {
-            std::vector<tx_extra_field> tx_extra_fields;
             std::string ascii;
             ascii.reserve(hex.length() / 2);
             size_t i = 0;
@@ -472,13 +471,7 @@ namespace xmreg
             {
                 std::cerr << "Failed to parse tx extra" << std::endl;
             }
-            else
-            {
-                for (const auto &field : tx_extra_fields)
-                {
-                    std::cout << field << std::endl;
-                }
-            }
+
 
             // find corresponding field
             //            tx_extra_additional_pub_keys additional_pub_keys;
