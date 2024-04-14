@@ -472,13 +472,7 @@ namespace xmreg
             {
                 std::cerr << "Failed to parse tx extra" << std::endl;
             }
-            else
-            {
-                for (const auto &field : tx_extra_fields)
-                {
-                    cout << "Fields: " << field << std::endl;
-                }
-            }
+
 
             // find corresponding field
             //            tx_extra_additional_pub_keys additional_pub_keys;
