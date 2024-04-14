@@ -474,48 +474,9 @@ namespace xmreg
             }
             else
             {
-                //                for (const auto& field : tx_extra_fields)
-                //                {
-                //                    cout << "Fields: " << wsextra << std::endl;
-                //                }
-
                 for (const auto &field : tx_extra_fields)
                 {
-                    switch (field.type())
-                    {
-                    case typeid(tx_extra_nonce):
-                    {
-                        const tx_extra_nonce &txen = boost::get<tx_extra_nonce>(field);
-                        std::cout << "Nonce: ";
-                        for (auto byte : txen.nonce)
-                        {
-                            std::cout << std::hex << (int)byte;
-                        }
-                        std::cout << std::endl;
-                    }
-                    break;
-                    case typeid(tx_extra_pub_key):
-                    {
-                        const tx_extra_pub_key &txepk = boost::get<tx_extra_pub_key>(field);
-                        std::cout << "Public Key: " << epee::string_tools::pod_to_hex(txepk.pub_key) << std::endl;
-                    }
-                    break;
-                    case typeid(tx_extra_additional_pub_keys):
-                    {
-                        const tx_extra_additional_pub_keys &txap = boost::get<tx_extra_additional_pub_keys>(field);
-                        std::cout << "Additional Public Keys: ";
-                        for (const auto &key : txap.data)
-                        {
-                            std::cout << epee::string_tools::pod_to_hex(key) << ", ";
-                        }
-                        std::cout << std::endl;
-                    }
-                    break;
-                    // Handle other possible tx_extra_field types similarly
-                    default:
-                        std::cout << "Unknown type" << std::endl;
-                        break;
-                    }
+                    cout << "Fields: " << field << std::endl;
                 }
             }
 
