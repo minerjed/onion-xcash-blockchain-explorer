@@ -465,22 +465,19 @@ namespace xmreg
         string
         get_extra_public_tx_str() const
         {
+            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+
 
             std::vector<tx_extra_field> tx_extra_fields;
             if (!parse_tx_extra(extra, tx_extra_fields))
             {
                 std::cerr << "Failed to parse tx extra" << std::endl;
+            } else {
+                cout << "Length: " << tx_extra_fields.size << std::endl;
             }
 
 
-            // find corresponding field
-            //            tx_extra_additional_pub_keys additional_pub_keys;
-            //            if (!find_tx_extra_field_by_type(tx_extra_fields, additional_pub_keys))
-            //                return {};
-            //            return additional_pub_keys.data;
-
-            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
             bool firstTime = true;
