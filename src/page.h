@@ -468,7 +468,7 @@ namespace xmreg
         {
 
             std::vector<tx_extra_field> tx_extra_fields;
-            parse_tx_extra(tx_extra, tx_extra_fields);
+            parse_tx_extra(extra, tx_extra_fields);
 
 
             // find corresponding field
