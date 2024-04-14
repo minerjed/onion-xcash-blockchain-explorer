@@ -467,13 +467,13 @@ namespace xmreg
         {
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-//            cout << "Binary Data as String: " << wsextra << std::endl;
+            cout << "Binary Data as String: " << wsextra << std::endl;
             // Convert the hexadecimal string to ASCII string
             bool firstTime = true;
             try
             {
                 std::string ascii_str = hex_to_ascii(wsextra);
-//                std::cout << "ASCII String: " << ascii_str << std::endl;
+                std::cout << "ASCII String: " << ascii_str << std::endl;
                 size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
                 // This is a public transaction
                 if (pos != std::string::npos)
