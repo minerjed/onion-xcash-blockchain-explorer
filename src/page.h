@@ -463,6 +463,41 @@ namespace xmreg
             return results;
         }
 
+        struct extra_field_visitor : public boost::static_visitor<void>
+        {
+            void operator()(const tx_extra_nonce &txen) const
+            {
+                std::cout << "Nonce: ";
+                for (auto byte : txen.nonce)
+                {
+                    std::cout << std::hex << (int)byte;
+                }
+                std::cout << std::endl;
+            }
+
+            void operator()(const tx_extra_pub_key &txepk) const
+            {
+                std::cout << "Public Key: " << epee::string_tools::pod_to_hex(txepk.pub_key) << std::endl;
+            }
+
+            void operator()(const tx_extra_additional_pub_keys &txap) const
+            {
+                std::cout << "Additional Public Keys: ";
+                for (const auto &key : txap.data)
+                {
+                    std::cout << epee::string_tools::pod_to_hex(key) << ", ";
+                }
+                std::cout << std::endl;
+            }
+
+            void operator()(const boost::blank &) const
+            {
+                std::cout << "Blank Field" << std::endl;
+            }
+
+            // Add cases for other types as necessary
+        };
+
         string
         get_extra_public_tx_str() const
         {
@@ -472,41 +507,7 @@ namespace xmreg
 
             for (const auto &field : tx_extra_fields)
             {
-                switch (field.type())
-                {
-                case typeid(tx_extra_nonce):
-                {
-                    const tx_extra_nonce &txen = boost::get<tx_extra_nonce>(field);
-                    std::cout << "Nonce: ";
-                    for (auto byte : txen.nonce)
-                    {
-                        std::cout << std::hex << (int)byte;
-                    }
-                    std::cout << std::endl;
-                }
-                break;
-                case typeid(tx_extra_pub_key):
-                {
-                    const tx_extra_pub_key &txepk = boost::get<tx_extra_pub_key>(field);
-                    std::cout << "Public Key: " << epee::string_tools::pod_to_hex(txepk.pub_key) << std::endl;
-                }
-                break;
-                case typeid(tx_extra_additional_pub_keys):
-                {
-                    const tx_extra_additional_pub_keys &txap = boost::get<tx_extra_additional_pub_keys>(field);
-                    std::cout << "Additional Public Keys: ";
-                    for (const auto &key : txap.data)
-                    {
-                        std::cout << epee::string_tools::pod_to_hex(key) << ", ";
-                    }
-                    std::cout << std::endl;
-                }
-                break;
-                // Handle other possible tx_extra_field types similarly
-                default:
-                    std::cout << "Unknown type" << std::endl;
-                    break;
-                }
+                boost::apply_visitor(extra_field_visitor(), field);
             }
 
             // find corresponding field
