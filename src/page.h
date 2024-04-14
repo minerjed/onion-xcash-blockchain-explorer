@@ -474,7 +474,7 @@ namespace xmreg
             }
             else
             {
-                for (const auto& field : tx_extra_fields)
+                for (const auto &field : tx_extra_fields)
                 {
                     std::cout << field << std::endl;
                 }
