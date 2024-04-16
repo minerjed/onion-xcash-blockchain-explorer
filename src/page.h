@@ -478,17 +478,17 @@ namespace xmreg
             }
 
             // Extracting the public key
-            cryptonote::tx_extra_pub_key pub_key_field;
-            if (cryptonote::get_tx_extra_field_by_type(tx_extra_fields, pub_key_field))
-            {
-                std::cout << "Tx Public Key: " << epee::string_tools::pod_to_hex(pub_key_field.pub_key) << std::endl;
-            }
+            //cryptonote::tx_extra_pub_key pub_key_field;
+            //if (cryptonote::get_tx_extra_field_by_type(tx_extra_fields, pub_key_field))
+            //{
+            //    std::cout << "Tx Public Key: " << epee::string_tools::pod_to_hex(pub_key_field.pub_key) << std::endl;
+           // }6
 
             // Extracting additional public keys
-            cryptonote::tx_extra_nonce additional_keys;
-            if (cryptonote::find_tx_extra_field_by_type(tx_extra_fields, additional_keys))
+            cryptonote::tx_extra_nonce extra_nonce;
+            if (find_tx_extra_field_by_type(tx_extra_fields, extra_nonce))
             {
-                for (const auto &key : additional_keys.data)
+                for (const auto &key : extra_nonce.data)
                 {
                     std::cout << "Additional Public Key: " << epee::string_tools::pod_to_hex(key) << std::endl;
                 }
