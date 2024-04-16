@@ -485,8 +485,8 @@ namespace xmreg
             }
 
             // Extracting additional public keys
-            cryptonote::tx_extra_additional_pub_keys additional_keys;
-            if (cryptonote::get_tx_extra_field_by_type(tx_extra_fields, additional_keys))
+            cryptonote::tx_extra_nonce additional_keys;
+            if (cryptonote::find_tx_extra_field_by_type(tx_extra_fields, additional_keys))
             {
                 for (const auto &key : additional_keys.data)
                 {
