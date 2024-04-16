@@ -488,7 +488,7 @@ namespace xmreg
             cryptonote::tx_extra_nonce extra_nonce;
             if (find_tx_extra_field_by_type(tx_extra_fields, extra_nonce))
             {
-                for (const auto &key : extra_nonce.data)
+                for (const auto &key : extra_nonce.nonce)
                 {
                     std::cout << "Additional Public Key: " << epee::string_tools::pod_to_hex(key) << std::endl;
                 }
