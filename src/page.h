@@ -497,7 +497,15 @@ namespace xmreg
                     // Convert to a string and print only if the length is 95 or 100 bytes
                     if (nonce_byte_length == 95 || nonce_byte_length == 100)
                     {
-                        std::cout << "Converted String: " << convert_hex_to_string(nonce_str) << std::endl;
+                        std::string converted = convert_hex_to_string(nonce_str);
+                        std::cout << "Converted String: " << converted << std::endl;
+
+                        // Now trim the first and last characters and print again
+                        if (converted.length() > 2)
+                        { // Ensure there are characters to trim
+                            std::string trimmed = converted.substr(1, converted.length() - 2);
+                            std::cout << "Trimmed String: " << trimmed << std::endl;
+                        }
                     }
                 }
             }
