@@ -471,18 +471,11 @@ namespace xmreg
                     std::ostringstream nonce_stream;
                     for (auto n : x.nonce)
                     {
-                        std::ostringstream hex_stream;
-                        hex_stream << std::hex << std::setw(2) << std::setfill('0') << (int)n;
-                        std::string hex_str = hex_stream.str();
-
-                        if (hex_str.length() > 2)
-                        {                                                            // Ensure the string is long enough to be trimmed
-                            nonce_stream << hex_str.substr(1, hex_str.length() - 2); // Trim first and last character
-                        }
+                        nonce_stream << std::hex << std::setw(2) << std::setfill('0') << (int)n;
                     }
                     std::string nonce_str = nonce_stream.str();
-                    std::cout << "Nonce (trimmed): " << nonce_str << std::endl;
-                    std::cout << "Nonce Length: " << nonce_str.length() / 2 << " bytes" << std::endl; // Length in bytes
+                    std::cout << "Nonce: " << nonce_str << std::endl;
+                    std::cout << "Nonce Length: " << nonce_str.length() / 2 << " bytes" << std::endl;
                 }
             }
 
