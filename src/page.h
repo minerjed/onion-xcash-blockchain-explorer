@@ -512,7 +512,9 @@ namespace xmreg
                             // Further processing with serialized_tx_key, such as deserialization
                             std::string binary_tx_key;
 
-                            if (!cryptonote::parse_and_validate_tx_from_blob(serialized_tx_key, binary_tx_key))
+                            cryptonote::blobdata bdata(serialized_tx_key);
+
+                            if (!cryptonote::parse_and_validate_tx_from_blob(ddata, binary_tx_key))
                             {
                                 std::cerr << "Failed to deserialize string." << std::endl;
                             }
