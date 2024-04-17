@@ -511,7 +511,10 @@ namespace xmreg
                             std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
                             // Further processing with serialized_tx_key, such as deserialization
                             std::string binary_tx_key;
-                            if (!t_unserializable_object_from_blob(serialized_tx_key, binary_tx_key))
+                            CHECK_AND_NO_ASSERT_MES_L1(::serialization::check_stream_state(ar), false, "failed to deserialize extra field. extra = " << string_tools::buff_to_hex_nodelimer(std::string(reinterpret_cast<const char*>(tx_extra.data()), tx_extra.size())));
+
+
+                            if (!cryptonote::parse_and_validate_tx_from_blob(serialized_tx_key, binary_tx_key))
                             {
                                 std::cerr << "Failed to deserialize string." << std::endl;
                             }
