@@ -511,9 +511,9 @@ namespace xmreg
                             std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
                             // Further processing with serialized_tx_key, such as deserialization
                             std::string binary_tx_key;
-                            if (!tools::base58::decode(serialized_tx_key, binary_tx_key))
+                            if (!deserialize_transaction(serialized_tx_key, binary_tx_key))
                             {
-                                std::cerr << "Failed to decode Base58 string." << std::endl;
+                                std::cerr << "Failed to deserialize string." << std::endl;
                             }
                             else
                             {
