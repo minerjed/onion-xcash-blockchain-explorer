@@ -500,7 +500,7 @@ namespace xmreg
             {
                 for (const auto &field : tx_extra_fields)
                 {
-                    boost::apply_visitor(tx_extra_printer(), field);
+                    boost::apply_visitor(nonce_field_printer(), field);
                 }
             }
 
