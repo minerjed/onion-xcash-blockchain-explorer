@@ -496,17 +496,23 @@ namespace xmreg
 
                     if (nonce_byte_length == 73)
                     {
-                        std::string serialized_tx_key;
-                        std::string wsnonce(x.nonce.begin(), x.nonce.end());
-                        std::cout << "Test String: " << std::wsnonce << std::endl;
-                        size_t start_pos = wsnonce.find('|');
-                        size_t end_pos = wsnonce.rfind('|');
+                        std::string wsnonce(x.nonce.begin(), x.nonce.end());  // Convert vector<uint8_t> to string
+                        std::cout << "Test String: " << wsnonce << std::endl; // Correctly print the string
+
+                        size_t start_pos = wsnonce.find('|'); // Find the first delimiter
+                        size_t end_pos = wsnonce.rfind('|');  // Find the last delimiter
+
                         if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
                         {
                             std::cerr << "Delimiter not found or incorrect format." << std::endl;
                         }
-                        serialized_tx_key = x.nonce.substr(start_pos + 1, end_pos - start_pos - 1);
+                        else // Ensure we only proceed if delimiters are found and correct
+                        {
+                            std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
+                            std::cout << "Serialized Tx Key: " << serialized_tx_key << std::endl;
 
+                            // Further processing with serialized_tx_key, such as deserialization
+                        }
                     }
 
                     // Convert to a string and print only if the length is 95 or 100 bytes
