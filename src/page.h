@@ -497,9 +497,10 @@ namespace xmreg
                     if (nonce_byte_length == 73)
                     {
                         std::string serialized_tx_key;
-                        std::string nonce(x.nonce.begin(), x.nonce.end());
-                        size_t start_pos = x.nonce.find('|');
-                        size_t end_pos = x.nonce.rfind('|');
+                        std::string wsnonce(x.nonce.begin(), x.nonce.end());
+                        std::cout << "Test String: " << std::wsnonce << std::endl;
+                        size_t start_pos = wsnonce.find('|');
+                        size_t end_pos = wsnonce.rfind('|');
                         if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
                         {
                             std::cerr << "Delimiter not found or incorrect format." << std::endl;
