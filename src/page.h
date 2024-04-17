@@ -496,7 +496,7 @@ namespace xmreg
 
                     if (nonce_byte_length == 73)
                     {
-                        std::string& serialized_tx_key;
+                        std::string serialized_tx_key;
                         std::string nonce(x.nonce.begin(), x.nonce.end());
                         size_t start_pos = x.nonce.find('|');
                         size_t end_pos = x.nonce.rfind('|');
