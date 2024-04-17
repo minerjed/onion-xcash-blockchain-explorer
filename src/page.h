@@ -518,9 +518,13 @@ namespace xmreg
             if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
             {
                 std::cerr << "Failed to parse transaction extra." << std::endl;
-            } else {
-                for (const auto& field : tx_extra_fields) {
-                boost::apply_visitor(tx_extra_printer(), field);   
+            }
+            else
+            {
+                for (const auto &field : tx_extra_fields)
+                {
+                    boost::apply_visitor(tx_extra_printer(), field);
+                }
             }
 
             // Extracting the public key
