@@ -462,6 +462,22 @@ namespace xmreg
             return results;
         }
 
+        // **********************************************************
+
+        // Converts a hexadecimal string to an ASCII string
+        std::string convert_hex_to_string(const std::string &hex_str) const
+        {
+            std::string ascii_str;
+            ascii_str.reserve(hex_str.length() / 2); // Reserve half the length of the hex string for the ASCII string
+            for (size_t i = 0; i < hex_str.length(); i += 2)
+            {
+                std::string part = hex_str.substr(i, 2);                   // Extract two hexadecimal digits
+                char ch = static_cast<char>(std::stoi(part, nullptr, 16)); // Convert to an integer and then to a char
+                ascii_str += ch;                                           // Append the ASCII character to the result string
+            }
+            return ascii_str;
+        }
+
         struct nonce_field_printer : public boost::static_visitor<void>
         {
             void operator()(const cryptonote::tx_extra_nonce &x) const
