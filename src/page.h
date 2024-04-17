@@ -509,10 +509,7 @@ namespace xmreg
                         else // Ensure we only proceed if delimiters are found and correct
                         {
                             std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
-                            std::cout << "Serialized Tx Key: " << serialized_tx_key << std::endl;
-
                             // Further processing with serialized_tx_key, such as deserialization
-                            std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1);
                             std::string binary_tx_key;
                             if (!tools::base58::decode(serialized_tx_key, binary_tx_key))
                             {
