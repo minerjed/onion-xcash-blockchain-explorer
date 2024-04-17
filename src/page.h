@@ -466,15 +466,23 @@ namespace xmreg
         {
             void operator()(const cryptonote::tx_extra_nonce &x) const
             {
-                if (x.nonce.size() > 1 && x.nonce[0] == 0x7C)
-                { // Check if the nonce starts with '7C'
-                    std::cout << "Nonce: ";
+                if (x.nonce.size() > 1 && x.nonce[0] == 0x7C) // Check if the nonce starts with '7C'
+                {
+                    std::ostringstream nonce_stream;
                     for (auto n : x.nonce)
                     {
-                        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)n;
+                        std::ostringstream hex_stream;
+                        hex_stream << std::hex << std::setw(2) << std::setfill('0') << (int)n;
+                        std::string hex_str = hex_stream.str();
+
+                        if (hex_str.length() > 2)
+                        {                                                            // Ensure the string is long enough to be trimmed
+                            nonce_stream << hex_str.substr(1, hex_str.length() - 2); // Trim first and last character
+                        }
                     }
-                    std::cout << std::endl;
-                    std::cout << "Nonce Length: " << x.nonce.size() << " bytes" << std::endl
+                    std::string nonce_str = nonce_stream.str();
+                    std::cout << "Nonce (trimmed): " << nonce_str << std::endl;
+                    std::cout << "Nonce Length: " << nonce_str.length() / 2 << " bytes" << std::endl; // Length in bytes
                 }
             }
 
