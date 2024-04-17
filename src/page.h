@@ -475,7 +475,14 @@ namespace xmreg
                     }
                     std::string nonce_str = nonce_stream.str();
                     std::cout << "Nonce: " << nonce_str << std::endl;
-                    std::cout << "Nonce Length: " << nonce_str.length() / 2 << " bytes" << std::endl;
+                    int nonce_byte_length = nonce_str.length() / 2;
+                    std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
+
+                    // Convert to a string and print only if the length is 95 or 100 bytes
+                    if (nonce_byte_length == 95 || nonce_byte_length == 100)
+                    {
+                        std::cout << "Converted String: " << convert_hex_to_string(nonce_str) << std::endl;
+                    }
                 }
             }
 
