@@ -514,7 +514,7 @@ namespace xmreg
 
                             cryptonote::blobdata bdata(serialized_tx_key);
 
-                            if (!cryptonote::parse_and_validate_tx_from_blob(ddata, binary_tx_key))
+                            if (!cryptonote::parse_and_validate_tx_from_blob(bdata, binary_tx_key))
                             {
                                 std::cerr << "Failed to deserialize string." << std::endl;
                             }
