@@ -474,6 +474,7 @@ namespace xmreg
                         std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)n;
                     }
                     std::cout << std::endl;
+                    std::cout << "Nonce Length: " << x.nonce.size() << " bytes" << std::endl
                 }
             }
 
