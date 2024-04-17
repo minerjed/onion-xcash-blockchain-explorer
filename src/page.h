@@ -494,6 +494,19 @@ namespace xmreg
                     int nonce_byte_length = nonce_str.length() / 2;
                     std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
 
+                    if (nonce_byte_length == 73)
+                    {
+                        std::string nonce(x.nonce.begin(), x.nonce.end());
+                        size_t start_pos = x.nonce.find('|');
+                        size_t end_pos = x.nonce.rfind('|');
+                        if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
+                        {
+                            std::cerr << "Delimiter not found or incorrect format." << std::endl;
+                        }
+                        serialized_tx_key = x.nonce.substr(start_pos + 1, end_pos - start_pos - 1);
+                        
+                    }
+
                     // Convert to a string and print only if the length is 95 or 100 bytes
                     if (nonce_byte_length == 95 || nonce_byte_length == 100)
                     {
