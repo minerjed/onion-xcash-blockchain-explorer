@@ -465,7 +465,7 @@ namespace xmreg
         // **********************************************************
 
         // Converts a hexadecimal string to an ASCII string
-        std::string convert_hex_to_string(const std::string &hex_str) const
+        static std::string convert_hex_to_string(const std::string &hex_str)
         {
             std::string ascii_str;
             ascii_str.reserve(hex_str.length() / 2); // Reserve half the length of the hex string for the ASCII string
