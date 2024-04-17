@@ -462,48 +462,25 @@ namespace xmreg
             return results;
         }
 
-        // Define a visitor that prints the content of each tx_extra_field variant
-        struct tx_extra_printer : public boost::static_visitor<void>
+        struct nonce_field_printer : public boost::static_visitor<void>
         {
-            void operator()(const cryptonote::tx_extra_padding &x) const
-            {
-                std::cout << "Padding: " << x.size << " bytes" << std::endl;
-            }
-
-            void operator()(const cryptonote::tx_extra_pub_key &x) const
-            {
-                std::cout << "Public Key: " << epee::string_tools::pod_to_hex(x.pub_key) << std::endl;
-            }
-
             void operator()(const cryptonote::tx_extra_nonce &x) const
             {
-                std::cout << "Nonce: ";
-                for (auto n : x.nonce)
-                {
-                    std::cout << std::hex << (int)n;
+                if (x.nonce.size() > 1 && x.nonce[0] == 0x7C)
+                { // Check if the nonce starts with '7C'
+                    std::cout << "Nonce: ";
+                    for (auto n : x.nonce)
+                    {
+                        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)n;
+                    }
+                    std::cout << std::endl;
                 }
-                std::cout << std::endl;
-            }
-
-            void operator()(const cryptonote::tx_extra_merge_mining_tag &x) const
-            {
-                std::cout << "Merge Mining Tag: depth " << x.depth << ", merkle root " << epee::string_tools::pod_to_hex(x.merkle_root) << std::endl;
-            }
-
-            void operator()(const cryptonote::tx_extra_additional_pub_keys &x) const
-            {
-                std::cout << "Additional Pub Keys: ";
-                for (const auto &key : x.data)
-                {
-                    std::cout << epee::string_tools::pod_to_hex(key) << " ";
-                }
-                std::cout << std::endl;
             }
 
             template <typename T>
             void operator()(const T &x) const
             {
-                std::cout << "Unhandled tx_extra_field type" << std::endl;
+                // Do nothing for all other types
             }
         };
 
