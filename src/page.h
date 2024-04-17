@@ -512,6 +512,22 @@ namespace xmreg
                             std::cout << "Serialized Tx Key: " << serialized_tx_key << std::endl;
 
                             // Further processing with serialized_tx_key, such as deserialization
+                            std::string binary_tx_key = tools::base58::decode(serialized_tx_key);
+                            std::istringstream iss(binary_tx_key);
+                            binary_archive<false> ar(iss);
+                            try
+                            {
+                                if (!::serialization::serialize(ar, tx_key))
+                                {
+                                    std::cerr << "Deserialization of tx_key failed." << std::endl;
+                                    return false;
+                                }
+                            }
+                            catch (const std::exception &e)
+                            {
+                                std::cerr << "Deserialization exception: " << e.what() << std::endl;
+                                return false;
+                            }
                         }
                     }
 
