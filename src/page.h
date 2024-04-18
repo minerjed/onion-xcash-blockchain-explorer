@@ -510,17 +510,15 @@ namespace xmreg
                         {
                             std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
                             // Further processing with serialized_tx_key, such as deserialization
-                            std::string binary_tx_key;
-
                             cryptonote::blobdata bdata(serialized_tx_key);
-
-                            if (!cryptonote::parse_and_validate_tx_from_blob(bdata, binary_tx_key))
+                            cryptonote::transaction tx;
+                            if (!cryptonote::parse_and_validate_tx_from_blob(bdata, tx))
                             {
                                 std::cerr << "Failed to deserialize string." << std::endl;
                             }
                             else
                             {
-                                std::cout << "Decoded Tx Key: " << binary_tx_key << std::endl;
+                                std::cout << "Decoded Tx Key: " << tx << std::endl;
 
                                 // Further processing with binary_tx_key, such as deserialization
                             }
