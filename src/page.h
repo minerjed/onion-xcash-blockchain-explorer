@@ -518,7 +518,7 @@ namespace xmreg
                             }
                             else
                             {
-                                std::cout << "Decoded Tx Key: " << tx_details << std::endl;
+//                                std::cout << "Decoded Tx Key: " << tx_details << std::endl;
 
                                 // Further processing with binary_tx_key, such as deserialization
                             }
