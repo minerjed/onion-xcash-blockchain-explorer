@@ -525,7 +525,7 @@ namespace xmreg
                     }
 
                     // Convert to a string and print only if the length is 95 or 100 bytes
-                    if (nonce_byte_length == 95 || nonce_byte_length == 100)
+                    if (x.nonce.size() == 95 || x.nonce.size() == 100)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
                         std::cout << "Converted String: " << converted << std::endl;
