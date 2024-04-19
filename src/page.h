@@ -414,6 +414,17 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
 
+        // Converts a ASCII string to hex
+        std::string ascii_to_hex(const std::string &ascii_str) const
+        {
+            std::stringstream hex_str;
+            for (unsigned char c : ascii_str)
+            {
+                hex_str << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(c);
+            }
+            return hex_str.str();
+        }
+
         // Converts a hexadecimal string to an ASCII string
         static std::string convert_hex_to_string(const std::string &hex_str)
         {
@@ -488,11 +499,9 @@ namespace xmreg
                         if (converted.length() > 2)
                         { // Ensure there are characters to trim
                             std::string trimmed = converted.substr(1, converted.length() - 2);
-                            std::cout << "Trimmed String: " << trimmed << std::endl;
+                            std::string hex_output = ascii_to_hex(trimmed);
+                            std::cout << "Converted Hex String: " << hex_output << std::endl;
                         }
-
-
-
                     }
 
                     // Convert to a string and print only if the length is 95 or 100 bytes
