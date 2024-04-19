@@ -573,6 +573,7 @@ namespace xmreg
             {
                 for (const auto &field : tx_extra_fields)
                 {
+                    std::cout << "Testing: " << field << std::endl;
                     boost::apply_visitor(nonce_field_printer(), field);
                 }
             }
