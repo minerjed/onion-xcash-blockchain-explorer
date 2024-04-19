@@ -414,56 +414,6 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
 
-        // Function to convert a hex string to an ASCII string
-        std::string hex_to_ascii(const std::string &hex) const
-        {
-            std::string ascii;
-            ascii.reserve(hex.length() / 2);
-            size_t i = 0;
-            for (; i < hex.length() - 1; i += 2)
-            {
-                std::string part = hex.substr(i, 2);
-                char high = hex_char_to_int(part[0]);
-                char low = hex_char_to_int(part[1]);
-                char value = (high << 4) | low;
-                ascii.push_back(value);
-            }
-            if (hex.length() % 2 != 0)
-            { // Handle the last single hex digit if the length is odd
-                char high = hex_char_to_int(hex[i]);
-                ascii.push_back((high << 4)); // This assumes the low nibble is 0
-            }
-            return ascii;
-        }
-
-        std::string ascii_to_hex(const std::string &ascii_str) const
-        {
-            std::stringstream hex_str;
-            for (unsigned char c : ascii_str)
-            {
-                hex_str << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(c);
-            }
-            return hex_str.str();
-        }
-
-        std::vector<std::string> extract_between_pipes(const std::string &str) const
-        {
-            std::vector<std::string> results;
-            size_t start = 0;
-            size_t end = 0;
-            while ((start = str.find('|', end)) != std::string::npos)
-            {
-                start++; // Move past the current '|'
-                end = str.find('|', start);
-                if (end == std::string::npos)
-                    break; // If there's no closing '|', exit
-                results.push_back(str.substr(start, end - start));
-            }
-            return results;
-        }
-
-        // **********************************************************
-
         // Converts a hexadecimal string to an ASCII string
         static std::string convert_hex_to_string(const std::string &hex_str)
         {
@@ -490,10 +440,8 @@ namespace xmreg
                         nonce_stream << std::hex << std::setw(2) << std::setfill('0') << (int)n;
                     }
                     std::string nonce_str = nonce_stream.str();
-                    std::cout << "Nonce: " << nonce_str << std::endl;
                     int nonce_byte_length = nonce_str.length() / 2;
-                    std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
-
+                    // This would be the tx_key_data
                     if (nonce_byte_length == 73)
                     {
                         std::string wsnonce(x.nonce.begin(), x.nonce.end());
@@ -528,18 +476,14 @@ namespace xmreg
                                 else
                                 {
                                     std::cout << "Secret Key Deserialized Successfully." << std::endl;
-                                    // Continue processing with tx_key
                                 }
                             }
                         }
                     }
-
                     // Convert to a string and print only if the length is 95 or 100 bytes
-                    if (nonce_byte_length == 95 || nonce_byte_length == 100)
+                    if (nonce_byte_length == 95 || nonce_byte_length == 100 || nonce_byte_length == 73)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
-                        std::cout << "Converted String: " << converted << std::endl;
-
                         // Now trim the first and last characters and print again
                         if (converted.length() > 2)
                         { // Ensure there are characters to trim
@@ -577,14 +521,7 @@ namespace xmreg
                 }
             }
 
-            // Extracting the public key
-            // cryptonote::tx_extra_pub_key pub_key_field;
-            // if (cryptonote::get_tx_extra_field_by_type(tx_extra_fields, pub_key_field))
-            //{
-            //    std::cout << "Tx Public Key: " << epee::string_tools::pod_to_hex(pub_key_field.pub_key) << std::endl;
-            // }
-
-            // Extracting additional public keys
+/*
             cryptonote::tx_extra_nonce extra_nonce;
             if (find_tx_extra_field_by_type(tx_extra_fields, extra_nonce))
             {
@@ -642,6 +579,7 @@ namespace xmreg
             {
                 std::cout << "Error: " << e.what() << std::endl;
             }
+*/
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
