@@ -502,7 +502,7 @@ namespace xmreg
                     int nonce_byte_length = nonce_str.length() / 2;
                     std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
 
-                    if (nonce_byte_length == 73)
+                    if (nonce_byte_length == 34)
                     {
                         std::string wsnonce(x.nonce.begin(), x.nonce.end());
                         std::cout << "Test String: " << wsnonce << std::endl;
