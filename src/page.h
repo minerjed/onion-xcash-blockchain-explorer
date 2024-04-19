@@ -492,24 +492,13 @@ namespace xmreg
                         nonce_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(x.nonce[i]));
                     }
                     std::string nonce_str = nonce_stream.str();
-                    std::cout << "Processed Nonce: " << nonce_str << std::endl;
-                
-
-//                if (x.nonce.size() > 1 && x.nonce[0] == 0x7C) // Check if the nonce starts with '7C'
-//                {
-//                    std::ostringstream nonce_stream;
-//                    for (auto n : x.nonce)
-//                    {
-//                        nonce_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(n));
-//                    }
-//                    std::string nonce_str = nonce_stream.str();
-//                    std::cout << "Nonce: " << nonce_str << std::endl;
-
                     int nonce_byte_length = nonce_str.length() / 2;
                     std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
-
                     if (nonce_byte_length == 32)
                     {
+                       std::cout << "TX private key: " << nonce_str << std::endl;
+
+
 
                         std::string wsnonce(x.nonce.begin(), x.nonce.end());
                         std::cout << "Test String: " << wsnonce << std::endl;
@@ -549,18 +538,11 @@ namespace xmreg
                         }
                     }
 
-                    // Convert to a string and print only if the length is 95 or 100 bytes
+                    // Convert to a string and print only if the length is 93 or 98 bytes
                     if (nonce_byte_length == 93 || nonce_byte_length == 98)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
                         std::cout << "Converted String: " << converted << std::endl;
-
-                        // Now trim the first and last characters and print again
-                        if (converted.length() > 2)
-                        { // Ensure there are characters to trim
-                            std::string trimmed = converted.substr(1, converted.length() - 2);
-                            std::cout << "Trimmed String: " << trimmed << std::endl;
-                        }
                     }
                 }
             }
