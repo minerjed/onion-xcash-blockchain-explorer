@@ -414,57 +414,6 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
 
-        // Function to convert a hex string to an ASCII string
-        std::string hex_to_ascii(const std::string &hex) const
-        {
-            std::string ascii;
-            ascii.reserve(hex.length() / 2);
-            size_t i = 0;
-            for (; i < hex.length() - 1; i += 2)
-            {
-                std::string part = hex.substr(i, 2);
-                char high = hex_char_to_int(part[0]);
-                char low = hex_char_to_int(part[1]);
-                char value = (high << 4) | low;
-                ascii.push_back(value);
-            }
-            if (hex.length() % 2 != 0)
-            { // Handle the last single hex digit if the length is odd
-                char high = hex_char_to_int(hex[i]);
-                ascii.push_back((high << 4)); // This assumes the low nibble is 0
-            }
-            return ascii;
-        }
-
-        std::string ascii_to_hex(const std::string &ascii_str) const
-        {
-            std::stringstream hex_str;
-            for (unsigned char c : ascii_str)
-            {
-                hex_str << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(c);
-            }
-            return hex_str.str();
-        }
-
-        std::vector<std::string> extract_between_pipes(const std::string &str) const
-        {
-            std::vector<std::string> results;
-            size_t start = 0;
-            size_t end = 0;
-            while ((start = str.find('|', end)) != std::string::npos)
-            {
-                start++; // Move past the current '|'
-                end = str.find('|', start);
-                if (end == std::string::npos)
-                    break; // If there's no closing '|', exit
-                results.push_back(str.substr(start, end - start));
-            }
-            return results;
-        }
-
-        // **********************************************************
-
-        // Converts a hexadecimal string to an ASCII string
         static std::string convert_hex_to_string(const std::string &hex_str)
         {
             std::string ascii_str;
@@ -537,6 +486,7 @@ namespace xmreg
             {
                 for (const auto &field : tx_extra_fields)
                 {
+                    bool firstTime = true;
                     boost::apply_visitor(nonce_field_printer(), field);
                 }
             }
