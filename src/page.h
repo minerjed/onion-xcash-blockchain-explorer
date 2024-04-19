@@ -482,50 +482,62 @@ namespace xmreg
         {
             void operator()(const cryptonote::tx_extra_nonce &x) const
             {
-
-                if (x.nonce.size() == 73) // You had 'nonce_byte_length' which I assume was intended to be this
+                if (x.nonce.size() > 1 && x.nonce[0] == 0x7C) // Check if the nonce starts with '7C'
                 {
-                    std::string wsnonce(x.nonce.begin(), x.nonce.end());
-                    std::cout << "Test String: " << wsnonce << std::endl;
-
-                    size_t start_pos = wsnonce.find('|');
-                    size_t end_pos = wsnonce.rfind('|');
-
-                    if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
+                    std::ostringstream nonce_stream;
+                    for (auto n : x.nonce)
                     {
-                        std::cerr << "Delimiter not found or incorrect format." << std::endl;
+                        nonce_stream << std::hex << std::setw(2) << std::setfill('0') << (int)n;
                     }
-                    else
-                    {
-                        std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1);
+                    std::string nonce_str = nonce_stream.str();
+                    std::cout << "Nonce: " << nonce_str << std::endl;
+                    int nonce_byte_length = nonce_str.length() / 2;
+                    std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
 
-                        // Correctly handle the hex string to binary data conversion
-                        std::string blobdata_key;
-                        if (!epee::string_tools::parse_hexstr_to_binbuff(serialized_tx_key, blobdata_key))
+                    if (nonce_byte_length == 73)
+                    {
+                        std::string wsnonce(x.nonce.begin(), x.nonce.end());
+                        std::cout << "Test String: " << wsnonce << std::endl;
+
+                        size_t start_pos = wsnonce.find('|');
+                        size_t end_pos = wsnonce.rfind('|');
+
+                        if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
                         {
-                            std::cerr << "Failed to parse hex string to binary buffer." << std::endl;
+                            std::cerr << "Delimiter not found or incorrect format." << std::endl;
                         }
                         else
                         {
-                            // Assume that we are deserializing to a crypto::secret_key, ensure the secret_key type is correctly handled
-                            crypto::secret_key tx_key;
-                            std::istringstream iss(blobdata_key); // Create a stream from the binary data
-                            binary_archive<false> ar(iss);        // Create a non-const binary archive from the input stream
+                            std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1);
 
-                            if (!::serialization::serialize(ar, tx_key))
+                            // Correctly handle the hex string to binary data conversion
+                            std::string blobdata_key;
+                            if (!epee::string_tools::parse_hexstr_to_binbuff(serialized_tx_key, blobdata_key))
                             {
-                                std::cerr << "Failed to deserialize secret key." << std::endl;
+                                std::cerr << "Failed to parse hex string to binary buffer." << std::endl;
                             }
                             else
                             {
-                                std::cout << "Secret Key Deserialized Successfully." << std::endl;
-                                // Continue processing with tx_key
+                                // Assume that we are deserializing to a crypto::secret_key, ensure the secret_key type is correctly handled
+                                crypto::secret_key tx_key;
+                                std::istringstream iss(blobdata_key); // Create a stream from the binary data
+                                binary_archive<false> ar(iss);        // Create a non-const binary archive from the input stream
+
+                                if (!::serialization::serialize(ar, tx_key))
+                                {
+                                    std::cerr << "Failed to deserialize secret key." << std::endl;
+                                }
+                                else
+                                {
+                                    std::cout << "Secret Key Deserialized Successfully." << std::endl;
+                                    // Continue processing with tx_key
+                                }
                             }
                         }
                     }
 
                     // Convert to a string and print only if the length is 95 or 100 bytes
-                    if (x.nonce.size() == 95 || x.nonce.size() == 100)
+                    if (nonce_byte_length == 95 || nonce_byte_length == 100)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
                         std::cout << "Converted String: " << converted << std::endl;
