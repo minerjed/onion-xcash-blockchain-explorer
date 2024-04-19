@@ -415,7 +415,7 @@ namespace xmreg
         }
 
         // Converts a ASCII string to hex
-        std::string ascii_to_hex(const std::string &ascii_str) const
+        std::string ascii_to_hex(const std::string &ascii_str)
         {
             std::stringstream hex_str;
             for (unsigned char c : ascii_str)
