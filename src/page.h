@@ -480,8 +480,18 @@ namespace xmreg
                             }
                         }
                     }
+                    if (nonce_byte_length == 73)
+                    {
+                        std::string wsnonce(x.nonce.begin(), x.nonce.end());
+                        std::cout << "Test String: " << wsnonce << std::endl;
+
+
+
+
+                    }
+
                     // Convert to a string and print only if the length is 95 or 100 bytes
-                    if (nonce_byte_length == 95 || nonce_byte_length == 100 || nonce_byte_length == 73)
+                    if (nonce_byte_length == 95 || nonce_byte_length == 100)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
                         // Now trim the first and last characters and print again
