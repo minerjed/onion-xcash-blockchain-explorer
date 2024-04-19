@@ -493,14 +493,15 @@ namespace xmreg
                     }
                     if (nonce_byte_length == 73)
                     {
+                        std::cout << "Nonce_straem: " << nonce_stream.str() << std::endl;
+
                         std::string wsnonce(x.nonce.begin(), x.nonce.end());
                         std::string converted = convert_hex_to_string(nonce_str);
                         // Now trim the first and last characters
                         if (converted.length() > 2)
                         { // Ensure there are characters to trim
                             std::string trimmed = converted.substr(1, converted.length() - 2);
-                            std::string hex_output = ascii_to_hex(trimmed);
-                            std::cout << "Converted Hex String: " << hex_output << std::endl;
+
                         }
                     }
 
