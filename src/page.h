@@ -509,8 +509,6 @@ namespace xmreg
                         else
                         {
                             std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1);
-
-                            // Correctly handle the hex string to binary data conversion
                             std::string blobdata_key;
                             if (!epee::string_tools::parse_hexstr_to_binbuff(serialized_tx_key, blobdata_key))
                             {
@@ -518,11 +516,11 @@ namespace xmreg
                             }
                             else
                             {
-                                // Assume that we are deserializing to a crypto::secret_key, ensure the secret_key type is correctly handled
-                                crypto::secret_key tx_key;
-                                std::istringstream iss(blobdata_key); // Create a stream from the binary data
-                                binary_archive<false> ar(iss);        // Create a non-const binary archive from the input stream
+                                // Use epee::span to create a binary archive
+                                epee::span<const unsigned char> blob_span(reinterpret_cast<const unsigned char *>(blobdata_key.data()), blobdata_key.size());
+                                binary_archive<false> ar(blob_span); // Create a non-const binary archive from the span
 
+                                crypto::secret_key tx_key;
                                 if (!::serialization::serialize(ar, tx_key))
                                 {
                                     std::cerr << "Failed to deserialize secret key." << std::endl;
