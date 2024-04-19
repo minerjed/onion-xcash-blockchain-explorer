@@ -482,6 +482,9 @@ namespace xmreg
         {
             void operator()(const cryptonote::tx_extra_nonce &x) const
             {
+                std::string wsnonce(x.nonce.begin(), x.nonce.end());
+                std::cout << "Test String: " << wsnonce << std::endl;
+
                 if (x.nonce.size() > 1 && x.nonce[0] == 0x7C) // Check if the nonce starts with '7C'
                 {
                     std::ostringstream nonce_stream;
