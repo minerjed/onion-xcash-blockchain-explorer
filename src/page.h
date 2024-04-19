@@ -485,8 +485,11 @@ namespace xmreg
                         std::string wsnonce(x.nonce.begin(), x.nonce.end());
                         std::string converted = convert_hex_to_string(nonce_str);
                         // Now trim the first and last characters
-                        std::cout << "Test String: " << converted << std::endl;
-
+                        if (converted.length() > 2)
+                        { // Ensure there are characters to trim
+                            std::string trimmed = converted.substr(1, converted.length() - 2);
+                            std::cout << "Trimmed String: " << trimmed << std::endl;
+                        }
 
 
 
@@ -496,7 +499,7 @@ namespace xmreg
                     if (nonce_byte_length == 95 || nonce_byte_length == 100)
                     {
                         std::string converted = convert_hex_to_string(nonce_str);
-                        // Now trim the first and last characters and print again
+                        // Now trim the first and last characters
                         if (converted.length() > 2)
                         { // Ensure there are characters to trim
                             std::string trimmed = converted.substr(1, converted.length() - 2);
