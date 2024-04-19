@@ -496,31 +496,31 @@ namespace xmreg
 
                     if (nonce_byte_length == 73)
                     {
-                        std::string wsnonce(x.nonce.begin(), x.nonce.end());  // Convert vector<uint8_t> to string
-                        std::cout << "Test String: " << wsnonce << std::endl; // Correctly print the string
+                        std::string wsnonce(x.nonce.begin(), x.nonce.end());
+                        std::cout << "Test String: " << wsnonce << std::endl;
 
-                        size_t start_pos = wsnonce.find('|'); // Find the first delimiter
-                        size_t end_pos = wsnonce.rfind('|');  // Find the last delimiter
+                        size_t start_pos = wsnonce.find('|');
+                        size_t end_pos = wsnonce.rfind('|');
 
                         if (start_pos == std::string::npos || end_pos == std::string::npos || start_pos == end_pos)
                         {
                             std::cerr << "Delimiter not found or incorrect format." << std::endl;
                         }
-                        else // Ensure we only proceed if delimiters are found and correct
+                        else
                         {
-                            std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1); // Extract the key
-                            // Further processing with serialized_tx_key, such as deserialization
-                            cryptonote::blobdata bdata(serialized_tx_key);
-                            cryptonote::transaction tx;
-                            if (!cryptonote::parse_and_validate_tx_from_blob(bdata, tx))
+                            std::string serialized_tx_key = wsnonce.substr(start_pos + 1, end_pos - start_pos - 1);
+                            // Assume serialized_tx_key is hex encoded for clarity
+                            cryptonote::blobdata blobdata_key = epee::string_tools::parse_hexstr_to_binbuff(serialized_tx_key);
+
+                            crypto::secret_key tx_key;
+                            if (!epee::serialization::load_t_from_binary(tx_key, blobdata_key))
                             {
-                                std::cerr << "Failed to deserialize string." << std::endl;
+                                std::cerr << "Failed to deserialize secret key." << std::endl;
                             }
                             else
                             {
-//                                std::cout << "Decoded Tx Key: " << tx_details << std::endl;
-
-                                // Further processing with binary_tx_key, such as deserialization
+                                std::cout << "Secret Key Deserialized Successfully." << std::endl;
+                                // Continue processing with tx_key
                             }
                         }
                     }
