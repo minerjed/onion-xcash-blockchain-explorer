@@ -442,7 +442,6 @@ namespace xmreg
                     }
                     std::string nonce_str = nonce_stream.str();
                     int nonce_byte_length = nonce_str.length() / 2;
-                    std::cout << "Nonce Length: " << nonce_byte_length << " bytes" << std::endl;
                     if (nonce_byte_length == 32)
                     {
                         std::cout << "TX private key: " << nonce_str << std::endl;
@@ -491,66 +490,6 @@ namespace xmreg
                 }
             }
 
-            /*
-                        cryptonote::tx_extra_nonce extra_nonce;
-                        if (find_tx_extra_field_by_type(tx_extra_fields, extra_nonce))
-                        {
-                            for (const auto &key : extra_nonce.nonce)
-                            {
-                                std::cout << "Additional Public Key: " << epee::string_tools::pod_to_hex(key) << std::endl;
-                            }
-                        }
-
-                        // Convert the hexadecimal string to ASCII string
-                        bool firstTime = true;
-                        try
-                        {
-                            std::string ascii_str = hex_to_ascii(wsextra);
-                            std::cout << "ASCII String: " << ascii_str << std::endl;
-                            size_t pos = ascii_str.find(XCASH_SIGN_DATA_PREFIX);
-                            // This is a public transaction
-                            if (pos != std::string::npos)
-                            {
-                                char wtarget = '|';
-                                size_t wstart = ascii_str.size();
-                                int count = 0;
-                                while (count < 8 && wstart != std::string::npos)
-                                {
-                                    wstart = ascii_str.rfind(wtarget, wstart - 1); // Move the position back for the next search
-                                    count++;
-                                }
-                                if (wstart != std::string::npos)
-                                {
-                                    //                        std::cout << "The 7th occurrence of '" << wtarget
-                                    //                                  << "' from the end is at position: " << wstart << std::endl;
-                                }
-                                else
-                                {
-                                    std::cout << "Less than 7 occurrences of '" << wtarget
-                                              << "' were found." << std::endl;
-                                }
-                                // Extract substrings between '|' at starting position wstart - 1
-                                std::string modified_str = ascii_str.substr(wstart - 1);
-
-                                vector<string> extracted_strings = extract_between_pipes(modified_str);
-                                for (const auto &item : extracted_strings)
-                                {
-                                    cout << "Extracted Item: " << item << endl;
-                                    if (firstTime)
-                                    {
-                                        firstTime = false;
-                                        std::string hex_output = ascii_to_hex(item);
-                                        std::cout << "Converted Hex String: " << hex_output << std::endl;
-                                    }
-                                }
-                            }
-                        }
-                        catch (const std::invalid_argument &e)
-                        {
-                            std::cout << "Error: " << e.what() << std::endl;
-                        }
-
-            */
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
