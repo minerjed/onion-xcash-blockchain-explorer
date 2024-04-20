@@ -332,10 +332,7 @@ namespace xmreg
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
-        vector<uint8_t> extra_pub_tx;
-        txd.get_extra_public_tx_str();
-// jed
-
+        std::vector<std::string> extra_pub_tx;
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
 
@@ -474,12 +471,12 @@ namespace xmreg
         {
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-
             std::vector<cryptonote::tx_extra_field> tx_extra_fields;
-
+            std::vector<std::string> results;
             if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
             {
                 std::cerr << "Failed to parse transaction extra." << std::endl;
+                return results;
             }
             else
             {
@@ -487,12 +484,16 @@ namespace xmreg
                 {
                     nonce_field_printer printer;
                     boost::apply_visitor(printer, field);
+                    if (!printer.get_stored_value().empty())
+                    {
+                        results.push_back(printer.get_stored_value());
+                    }
+    
                     std::cout << printer.get_stored_value() << std::endl;
+    
                 }
             }
-
-            return epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            return results;
         }
 
         mstch::array
