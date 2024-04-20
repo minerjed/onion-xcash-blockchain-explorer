@@ -457,8 +457,8 @@ namespace xmreg
                         else if (nonce_byte_length == 98)
                         {
                             wcnt++;
+                            std::string converted = convert_hex_to_string(nonce_str);
                             if (wcnt == 1)
-                                std::string converted = convert_hex_to_string(nonce_str);
                             {
                                 std::cout << "To String: " << converted << std::endl;
                             }
