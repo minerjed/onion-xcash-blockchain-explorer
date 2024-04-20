@@ -320,7 +320,7 @@ namespace xmreg
         uint64_t no_confirmations;
         vector<uint8_t> extra;
         vector<uint8_t> extra_pub_tx;
-        std::string txkey :: {""};
+        std::string txKey{""};
 
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
@@ -365,7 +365,7 @@ namespace xmreg
                     if (nonce_byte_length == 32)
                     {
 //                        stored_value = nonce_str;
-                        tx_details.txKey = nonce_str;
+                        txKey = nonce_str;
                     }
                     else if (nonce_byte_length == 93)
                     {
