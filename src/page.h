@@ -5836,7 +5836,7 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str()},
+                {"extra_pub_tx", txd.get_extra_public_tx_str(1)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
@@ -5996,7 +5996,7 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str()},
+                {"extra_pub_tx", txd.get_extra_public_tx_str(1)},
                 {"with_ring_signatures", static_cast<bool>(
                                              with_ring_signatures)},
                 {"tx_json", tx_json},
