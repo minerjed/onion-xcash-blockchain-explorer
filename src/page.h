@@ -436,6 +436,7 @@ namespace xmreg
                 {
                     std::ostringstream nonce_stream;
                     // Start from 1 to skip the first character and end one before the last character
+                    int wcnt = 0;
                     for (std::size_t i = 1; i < x.nonce.size() - 1; ++i)
                     {
                         nonce_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(x.nonce[i]));
@@ -455,8 +456,16 @@ namespace xmreg
                         }
                         else if (nonce_byte_length == 98)
                         {
-                            std::string converted = convert_hex_to_string(nonce_str);
-                            std::cout << "Converted String: " << converted << std::endl;
+                            wcnt++;
+                            if (wcnt == 1)
+                                std::string converted = convert_hex_to_string(nonce_str);
+                            {
+                                std::cout << "To String: " << converted << std::endl;
+                            }
+                            else
+                            {
+                                std::cout << "From String: " << converted << std::endl;
+                            }
                         }
                     }
                 }
