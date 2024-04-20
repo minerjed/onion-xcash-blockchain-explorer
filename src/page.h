@@ -457,7 +457,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_tx", get_extra_public_tx_str()},
+//                {"extra_pub_tx", get_extra_public_tx_str()},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -473,7 +473,7 @@ namespace xmreg
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
-
+/*
         static std::string convert_hex_to_string(const std::string &hex_str)
         {
             std::string ascii_str;
@@ -555,7 +555,7 @@ namespace xmreg
             }
             return "";
         }
-
+*/
         mstch::array
         get_ring_sig_for_input(uint64_t in_i)
         {
@@ -5910,7 +5910,7 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str()},
+//                {"extra_pub_tx", txd.get_extra_public_tx_str()},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
@@ -6070,7 +6070,7 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str()},
+//                {"extra_pub_tx", txd.get_extra_public_tx_str()},
                 {"with_ring_signatures", static_cast<bool>(
                                              with_ring_signatures)},
                 {"tx_json", tx_json},
