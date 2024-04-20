@@ -429,14 +429,13 @@ namespace xmreg
 
         struct nonce_field_printer : public boost::static_visitor<void>
         {
+            mutable std::string stored_value;
             void operator()(const cryptonote::tx_extra_nonce &x) const
             {
-
                 if (x.nonce.size() > 2 && x.nonce[0] == 0x7C) // Ensure there's more than just the two delimiters
                 {
                     std::ostringstream nonce_stream;
                     // Start from 1 to skip the first character and end one before the last character
-                    int wcnt = 0;
                     for (std::size_t i = 1; i < x.nonce.size() - 1; ++i)
                     {
                         nonce_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(x.nonce[i]));
@@ -445,36 +444,26 @@ namespace xmreg
                     int nonce_byte_length = nonce_str.length() / 2;
                     if (nonce_byte_length == 32)
                     {
-                        std::cout << "TX private key: " << nonce_str << std::endl;
+                        stored_value = nonce_str;
                     }
-                    else
+                    else if (nonce_byte_length == 93)
                     {
-                        if (nonce_byte_length == 93)
-                        {
-                            std::string converted = convert_hex_to_string(nonce_str);
-                            std::cout << "Signature: " << converted << std::endl;
-                        }
-                        else if (nonce_byte_length == 98)
-                        {
-                            wcnt++;
-                            std::string converted = convert_hex_to_string(nonce_str);
-                            if (wcnt == 1)
-                            {
-                                std::cout << "To String: " << converted << std::endl;
-                            }
-                            else
-                            {
-                                std::cout << "From String: " << converted << std::endl;
-                            }
-                        }
+                        stored_value = convert_hex_to_string(nonce_str);
+                    }
+                    else if (nonce_byte_length == 98)
+                    {
+                        stored_value = convert_hex_to_string(nonce_str);
                     }
                 }
             }
-
             template <typename T>
             void operator()(const T &x) const
             {
                 // Do nothing for all other types
+            }
+            std::string get_stored_value() const
+            {
+                return stored_value;
             }
         };
 
@@ -494,8 +483,9 @@ namespace xmreg
             {
                 for (const auto &field : tx_extra_fields)
                 {
-                    bool firstTime = true;
-                    boost::apply_visitor(nonce_field_printer(), field);
+                    nonce_field_printer printer;
+                    boost::apply_visitor(printer, field);
+                    std::cout << printer.get_stored_value() << std::endl;
                 }
             }
 
