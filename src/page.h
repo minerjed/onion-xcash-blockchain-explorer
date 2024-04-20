@@ -315,24 +315,13 @@ namespace xmreg
         uint64_t size;
         uint64_t blk_height;
         size_t version;
-
         bool has_additional_tx_pub_keys{false};
-
-        int hex_char_to_int(char c) const
-        {
-            if (c >= '0' && c <= '9')
-                return c - '0';
-            if (c >= 'a' && c <= 'f')
-                return 10 + (c - 'a');
-            if (c >= 'A' && c <= 'F')
-                return 10 + (c - 'A');
-            throw std::invalid_argument("Invalid hexadecimal character");
-        }
-
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
-        std::vector<std::string> extra_pub_tx;
+        vector<uint8_t> extra_pub_tx;
+        std::string txkey :: {""};
+
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
 
@@ -343,6 +332,78 @@ namespace xmreg
 
         // public keys and xmr amount of outputs
         vector<output_tuple_with_tag> output_pub_keys;
+
+        //***************************
+
+        static std::string convert_hex_to_string(const std::string &hex_str)
+        {
+            std::string ascii_str;
+            ascii_str.reserve(hex_str.length() / 2); // Reserve half the length of the hex string for the ASCII string
+            for (size_t i = 0; i < hex_str.length(); i += 2)
+            {
+                std::string part = hex_str.substr(i, 2);                   // Extract two hexadecimal digits
+                char ch = static_cast<char>(std::stoi(part, nullptr, 16)); // Convert to an integer and then to a char
+                ascii_str += ch;                                           // Append the ASCII character to the result string
+            }
+            return ascii_str;
+        }
+
+        struct nonce_field_printer : public boost::static_visitor<void>
+        {
+            void operator()(const cryptonote::tx_extra_nonce &x) const
+            {
+                if (x.nonce.size() > 2 && x.nonce[0] == 0x7C) // Ensure there's more than just the two delimiters
+                {
+                    std::ostringstream nonce_stream;
+                    // Start from 1 to skip the first character and end one before the last character
+                    for (std::size_t i = 1; i < x.nonce.size() - 1; ++i)
+                    {
+                        nonce_stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(x.nonce[i]));
+                    }
+                    std::string nonce_str = nonce_stream.str();
+                    int nonce_byte_length = nonce_str.length() / 2;
+                    if (nonce_byte_length == 32)
+                    {
+//                        stored_value = nonce_str;
+                        tx_details.txKey = nonce_str;
+                    }
+                    else if (nonce_byte_length == 93)
+                    {
+//                        stored_value = convert_hex_to_string(nonce_str);
+                    }
+                    else if (nonce_byte_length == 98)
+                    {
+ //                       stored_value = convert_hex_to_string(nonce_str);
+                    }
+                }
+            }
+            template <typename T>
+            void operator()(const T &x) const
+            {
+                // Do nothing for all other types
+            }
+
+        };
+
+// Load public transaction parameters if they exist
+        std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
+            string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+        std::vector<cryptonote::tx_extra_field> tx_extra_fields;
+        if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
+        {
+            std::cerr << "Failed to parse transaction extra." << std::endl;
+        }
+        else
+        {
+            for (const auto &field : tx_extra_fields)
+            {
+                nonce_field_printer printer;
+                boost::apply_visitor(printer, field);
+                std::cout << printer.get_stored_value() << std::endl;
+            }
+        }
+
+        //***************************
 
         mstch::map
         get_mstch_map() const
@@ -396,7 +457,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_tx", get_extra_public_tx_str()},
+                {"extra_pub_tx", get_extra_public_tx_str(1)},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -466,16 +527,17 @@ namespace xmreg
             }
         };
 
-        std::vector<std::string> get_extra_public_tx_str() const
+        string
+        get_extra_public_tx_str(int index) const
         {
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             std::vector<cryptonote::tx_extra_field> tx_extra_fields;
-            std::vector<std::string> results;
+            std::string retValue{""};
             if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
             {
                 std::cerr << "Failed to parse transaction extra." << std::endl;
-                return results;
+                return retValue;
             }
             else
             {
@@ -485,13 +547,13 @@ namespace xmreg
                     boost::apply_visitor(printer, field);
                     if (!printer.get_stored_value().empty())
                     {
-                        results.push_back(printer.get_stored_value());
+//                        results.push_back(printer.get_stored_value());
                     }
 
                     std::cout << printer.get_stored_value() << std::endl;
                 }
             }
-            return results;
+            return "";
         }
 
         mstch::array
