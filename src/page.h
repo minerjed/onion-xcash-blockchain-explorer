@@ -467,7 +467,7 @@ namespace xmreg
         };
 
         string
-        get_extra_public_tx_str() const
+            std::vector<std::string> get_extra_public_tx_str() const
         {
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
@@ -488,9 +488,8 @@ namespace xmreg
                     {
                         results.push_back(printer.get_stored_value());
                     }
-    
+
                     std::cout << printer.get_stored_value() << std::endl;
-    
                 }
             }
             return results;
