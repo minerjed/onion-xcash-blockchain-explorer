@@ -319,7 +319,8 @@ namespace xmreg
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
-        vector<uint8_t> extra_pub_tx;
+        //      vector<uint8_t> extra_pub_tx;
+        vector<uint8_t> extra_pub_txid;
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -382,7 +383,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_tx", get_extra_public_tx_str(1)},
+                {"extra_pub_txid", get_extra_public_tx_str(1)},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -458,28 +459,29 @@ namespace xmreg
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
             std::vector<cryptonote::tx_extra_field> tx_extra_fields;
-            std::string retValue{""};
             if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
             {
                 std::cerr << "Failed to parse transaction extra." << std::endl;
             }
             else
             {
+                int wcnt = 0;
                 for (const auto &field : tx_extra_fields)
                 {
+                    wcnt ++;
                     nonce_field_printer printer;
                     boost::apply_visitor(printer, field);
                     if (!printer.get_stored_value().empty())
                     {
-                        //                        results.push_back(printer.get_stored_value());
+                        if (wcnt == 1)
+                        {
+                            return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
+                        }
                     }
-
                     std::cout << printer.get_stored_value() << std::endl;
                 }
             }
-
-            return epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            return "";
         }
 
         mstch::array
@@ -5836,7 +5838,7 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txid", txd.get_extra_public_tx_str(1)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
@@ -5996,7 +5998,7 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_tx", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txid", txd.get_extra_public_tx_str(1)},
                 {"with_ring_signatures", static_cast<bool>(
                                              with_ring_signatures)},
                 {"tx_json", tx_json},
