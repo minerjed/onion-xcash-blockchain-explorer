@@ -324,8 +324,8 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
-        bool have_public_tx = (extra_pub_flag == 'Y');
-        
+        bool have_public_tx = false;
+
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -401,6 +401,8 @@ namespace xmreg
 
             return txd_map;
         }
+
+        have_public_tx = (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
 
         string
         get_extra_str() const
