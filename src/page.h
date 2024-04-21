@@ -429,7 +429,7 @@ namespace xmreg
                 hexStream << std::setw(2) << static_cast<int>(c);
             }
 
-            std::cout << hexString;
+            std::cout << hexString,str();
             /*
                         std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                             string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
