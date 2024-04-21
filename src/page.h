@@ -475,14 +475,14 @@ namespace xmreg
                     if (!printer.get_stored_value().empty())
                     {
                         wcnt++;
-                        if (wcnt == 1)
+                        if (wcnt == index)
                         {
                             std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                             std::cout << "X=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
-                        else if (wcnt == 2)
+                        else if (wcnt == index)
                         {
                             std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
