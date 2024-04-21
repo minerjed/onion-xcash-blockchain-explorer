@@ -393,7 +393,7 @@ namespace xmreg
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"extra_pub_txTo", get_extra_public_tx_str(3)},
                 {"extra_pub_txFrom", get_extra_public_tx_str(4)},
-                {"have_public_tx", have_public_tx},
+                {"have_public_tx", compute_public_tx_flag()},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -403,7 +403,10 @@ namespace xmreg
             return txd_map;
         }
 
-        have_public_tx = (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
+        bool compute_public_tx_flag() const
+        {
+            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
+        }
 
         string
         get_extra_str() const
