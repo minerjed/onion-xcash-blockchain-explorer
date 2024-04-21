@@ -5875,7 +5875,7 @@ namespace xmreg
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"extra_pub_txTo", txd.get_extra_public_tx_str(3)},
-                {"extra_pub_txFrom", tx.get_extra_public_tx_str(4)},
+                {"extra_pub_txFrom", txd.get_extra_public_tx_str(4)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
