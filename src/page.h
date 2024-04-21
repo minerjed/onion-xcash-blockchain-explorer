@@ -364,49 +364,59 @@ namespace xmreg
                 payed_for_kB_micro_str = fmt::format("{:04.0f}", payed_for_kB * 1e6);
             }
 
-            mstch::map txd_map{
+            void update_public_tx_status() {
+            
+            }
+
+            mstch::map txd_map
+            {
+                update_public_tx_status();
+
                 {"hash", pod_to_hex(hash)},
-                {"prefix_hash", pod_to_hex(prefix_hash)},
-                {"pub_key", pod_to_hex(pk)},
-                {"tx_fee", fee_str},
-                {"tx_fee_short", fee_short_str},
-                {"fee_micro", fee_micro_str},
-                {"payed_for_kB", payed_for_kB_str},
-                {"payed_for_kB_micro", payed_for_kB_micro_str},
-                {"sum_inputs", xmr_amount_to_str(xmr_inputs, "{:0.6f}")},
-                {"sum_outputs", xmr_amount_to_str(xmr_outputs, "{:0.6f}")},
-                {"sum_inputs_short", xmr_amount_to_str(xmr_inputs, "{:0.3f}")},
-                {"sum_outputs_short", xmr_amount_to_str(xmr_outputs, "{:0.3f}")},
-                {"no_inputs", static_cast<uint64_t>(input_key_imgs.size())},
-                {"no_outputs", static_cast<uint64_t>(output_pub_keys.size())},
-                {"no_nonrct_inputs", num_nonrct_inputs},
-                {"mixin", mixin_str},
-                {"blk_height", blk_height},
-                {"version", static_cast<uint64_t>(version)},
-                {"has_payment_id", payment_id != null_hash},
-                {"has_payment_id8", payment_id8 != null_hash8},
-                {"payment_id", pod_to_hex(payment_id)},
-                {"confirmations", no_confirmations},
-                {"extra", get_extra_str()},
-                {"extra_pub_flag", get_extra_public_tx_str(0)},
-                {"extra_pub_txId", get_extra_public_tx_str(1)},
-                {"extra_pub_txSig", get_extra_public_tx_str(2)},
-                {"extra_pub_txTo", get_extra_public_tx_str(3)},
-                {"extra_pub_txFrom", get_extra_public_tx_str(4)},
-                {"have_public_tx", compute_public_tx_flag()},
-                {"payment_id8", pod_to_hex(payment_id8)},
-                {"unlock_time", unlock_time},
-                {"tx_size", fmt::format("{:0.4f}", tx_size)},
-                {"tx_size_short", fmt::format("{:0.2f}", tx_size)},
-                {"has_add_pks", !additional_pks.empty()}};
+                    {"prefix_hash", pod_to_hex(prefix_hash)},
+                    {"pub_key", pod_to_hex(pk)},
+                    {"tx_fee", fee_str},
+                    {"tx_fee_short", fee_short_str},
+                    {"fee_micro", fee_micro_str},
+                    {"payed_for_kB", payed_for_kB_str},
+                    {"payed_for_kB_micro", payed_for_kB_micro_str},
+                    {"sum_inputs", xmr_amount_to_str(xmr_inputs, "{:0.6f}")},
+                    {"sum_outputs", xmr_amount_to_str(xmr_outputs, "{:0.6f}")},
+                    {"sum_inputs_short", xmr_amount_to_str(xmr_inputs, "{:0.3f}")},
+                    {"sum_outputs_short", xmr_amount_to_str(xmr_outputs, "{:0.3f}")},
+                    {"no_inputs", static_cast<uint64_t>(input_key_imgs.size())},
+                    {"no_outputs", static_cast<uint64_t>(output_pub_keys.size())},
+                    {"no_nonrct_inputs", num_nonrct_inputs},
+                    {"mixin", mixin_str},
+                    {"blk_height", blk_height},
+                    {"version", static_cast<uint64_t>(version)},
+                    {"has_payment_id", payment_id != null_hash},
+                    {"has_payment_id8", payment_id8 != null_hash8},
+                    {"payment_id", pod_to_hex(payment_id)},
+                    {"confirmations", no_confirmations},
+                    {"extra", get_extra_str()},
+                    {"extra_pub_flag", get_extra_public_tx_str(0)},
+                    {"extra_pub_txId", get_extra_public_tx_str(1)},
+                    {"extra_pub_txSig", get_extra_public_tx_str(2)},
+                    {"extra_pub_txTo", get_extra_public_tx_str(3)},
+                    {"extra_pub_txFrom", get_extra_public_tx_str(4)},
+                    {"have_public_tx", have_public_tx},
+                    {"payment_id8", pod_to_hex(payment_id8)},
+                    {"unlock_time", unlock_time},
+                    {"tx_size", fmt::format("{:0.4f}", tx_size)},
+                    {"tx_size_short", fmt::format("{:0.2f}", tx_size)},
+                {
+                    "has_add_pks", !additional_pks.empty()
+                }
+            };
 
             return txd_map;
         }
 
-        bool compute_public_tx_flag() const
-        {
-            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
-        }
+//        bool compute_public_tx_flag() const
+//        {
+//            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
+//        }
 
         string
         get_extra_str() const
