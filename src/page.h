@@ -404,24 +404,6 @@ namespace xmreg
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
 
-        string
-        get_pub_flag_str() const
-        {
-            std::string hexString = stringToHex(XCASH_SIGN_DATA_PREFIX);
-            std::string extra = epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            if (pos != std::string::npos)
-            {
-                std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
-            }
-            else
-            {
-                std::cout << "String 'SigV1' not found." << std::endl;
-            }
-            return epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-        }
-
         static std::string convert_hex_to_string(const std::string &hex_str)
         {
             std::string ascii_str;
@@ -433,6 +415,25 @@ namespace xmreg
                 ascii_str += ch;                                           // Append the ASCII character to the result string
             }
             return ascii_str;
+        }
+
+        string
+        get_pub_flag_str() const
+        {
+            std::string hexString = convert_hex_to_string(XCASH_SIGN_DATA_PREFIX);
+            std::string extra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            size_t pos = extra.find(hexString);
+            if (pos != std::string::npos)
+            {
+                std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
+            }
+            else
+            {
+                std::cout << "String 'SigV1' not found." << std::endl;
+            }
+            return epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
 
         struct nonce_field_printer : public boost::static_visitor<void>
