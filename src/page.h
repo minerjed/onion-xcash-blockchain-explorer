@@ -420,7 +420,7 @@ namespace xmreg
         string
         get_pub_flag_str() const
         {
-            std::cout << "Enter get_pub_flag";
+            std::cout << "Enter get_pub_flag\n";
 
             std::ostringstream hexStream;
             hexStream << std::hex << std::setfill('0');
@@ -429,7 +429,7 @@ namespace xmreg
                 hexStream << std::setw(2) << static_cast<int>(c);
             }
 
-            std::cout << hexString.str();
+            std::cout << hexStream.str() << std::endl;
             /*
                         std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                             string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
