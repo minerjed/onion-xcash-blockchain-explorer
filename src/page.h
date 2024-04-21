@@ -385,7 +385,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_flag", get_pub_flag_str()},
+                {"extra_pub_flag", gget_extra_public_tx_str(0)},
                 {"extra_pub_txId", get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"payment_id8", pod_to_hex(payment_id8)},
@@ -490,8 +490,32 @@ namespace xmreg
         string
         get_extra_public_tx_str(int index) const
         {
+            std::ostringstream hexStream;
+            hexStream << std::hex << std::setfill('0');
+            for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
+            {
+                hexStream << std::setw(2) << static_cast<int>(c);
+            }
+            std::string hexString = hexStream.str();
+            std::regex trailingZerosPattern("(00)+$"); // Matches trailing "00" that repeat
+            hexString = std::regex_replace(hexString, trailingZerosPattern, "");
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            size_t pos = wsextra.find(hexString);
+            if (pos != std::string::npos)
+            // Public Transaction
+            {
+                if (indx == 0)
+                    return "Y";
+            }
+            else
+            // Private Transactions
+            {
+                if (indx == 0)
+                    return "Y";
+                else
+                    return "";
+            }
             std::vector<cryptonote::tx_extra_field> tx_extra_fields;
             if (!cryptonote::parse_tx_extra(extra, tx_extra_fields))
             {
