@@ -468,11 +468,11 @@ namespace xmreg
                 int wcnt = 0;
                 for (const auto &field : tx_extra_fields)
                 {
-                    wcnt ++;
                     nonce_field_printer printer;
                     boost::apply_visitor(printer, field);
                     if (!printer.get_stored_value().empty())
                     {
+                        wcnt ++;
                         if (wcnt == 1)
                         {   std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
