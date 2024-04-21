@@ -336,10 +336,6 @@ namespace xmreg
         // public keys and xmr amount of outputs
         vector<output_tuple_with_tag> output_pub_keys;
 
-        void update_public_tx_status()
-        {
-        }
-
         mstch::map
         get_mstch_map() const
         {
@@ -367,8 +363,6 @@ namespace xmreg
                 payed_for_kB_str = fmt::format("{:0.4f}", payed_for_kB);
                 payed_for_kB_micro_str = fmt::format("{:04.0f}", payed_for_kB * 1e6);
             }
-
-            update_public_tx_status();
 
             mstch::map txd_map = {
                 {"hash", pod_to_hex(hash)},
