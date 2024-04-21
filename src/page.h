@@ -385,7 +385,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_flag", gget_extra_public_tx_str(0)},
+                {"extra_pub_flag", get_extra_public_tx_str(0)},
                 {"extra_pub_txId", get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"payment_id8", pod_to_hex(payment_id8)},
