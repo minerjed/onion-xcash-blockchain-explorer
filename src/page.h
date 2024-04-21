@@ -428,13 +428,11 @@ namespace xmreg
             {
                 hexStream << std::setw(2) << static_cast<int>(c);
             }
-
             std::cout << hexStream.str() << std::endl;
-
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            ;
-            size_t pos = wsextra.find(hexString.str());
+            std::string hexString = hexStream.str();
+            size_t pos = wsextra.find(hexString);
             if (pos != std::string::npos)
             {
                 std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
