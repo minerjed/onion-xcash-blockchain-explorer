@@ -420,13 +420,13 @@ namespace xmreg
         string
         get_pub_flag_str() const
         {
+/*
             std::cout << "Enter get_pub_flag";
             std::string hexString = convert_hex_to_string(XCASH_SIGN_DATA_PREFIX);
             std::cout << hexString;
-            std::string extra = epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            
-            size_t pos = extra.find(hexString);
+            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
+            size_t pos = wsextra.find(hexString);
             if (pos != std::string::npos)
             {
                 std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
@@ -437,6 +437,8 @@ namespace xmreg
             }
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+*/
+            return "";
         }
 
         struct nonce_field_printer : public boost::static_visitor<void>
