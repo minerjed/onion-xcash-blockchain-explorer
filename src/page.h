@@ -324,7 +324,6 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
-        bool have_public_tx;
 
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
@@ -364,6 +363,7 @@ namespace xmreg
                 payed_for_kB_micro_str = fmt::format("{:04.0f}", payed_for_kB * 1e6);
             }
 
+            bool have_public_tx = false;
             std::ostringstream hexStream;
             hexStream << std::hex << std::setfill('0');
             for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
@@ -372,6 +372,11 @@ namespace xmreg
             }
             std::string hexString = hexStream.str();
             std::regex trailingZerosPattern("(00)+$");
+            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            size_t pos = wsextra.find(hexString);
+            if (pos != std::string::npos)
+                have_public_tx = true;
 
             mstch::map txd_map = {
                 {"hash", pod_to_hex(hash)},
