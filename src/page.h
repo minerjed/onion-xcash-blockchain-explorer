@@ -417,23 +417,20 @@ namespace xmreg
             return ascii_str;
         }
 
-        std::string convert_string_to_hex(const std::string &input)
-        {
-            std::ostringstream hexStream;
-            hexStream << std::hex << std::setfill('0');
-            for (unsigned char c : input)
-            {
-                hexStream << std::setw(2) << static_cast<int>(c);
-            }
-            return hexStream.str();
-        }
-
         string
         get_pub_flag_str() const
         {
             std::cout << "Enter get_pub_flag";
-            std::string hexString = convert_string_to_hex(XCASH_SIGN_DATA_PREFIX);
-            std::cout << hexString;
+
+            std::ostringstream hexStream;
+            hexStream << std::hex << std::setfill('0');
+            for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
+            {
+                hexStream << std::setw(2) << static_cast<int>(c);
+            }
+
+//            std::string hexString = convert_string_to_hex(XCASH_SIGN_DATA_PREFIX);
+//            std::cout << hexString;
             /*
                         std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                             string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
