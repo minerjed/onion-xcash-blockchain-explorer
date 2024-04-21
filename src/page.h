@@ -377,6 +377,10 @@ namespace xmreg
             size_t pos = wsextra.find(hexString);
             if (pos != std::string::npos)
                 have_public_tx = true;
+            if (have_public_tx)
+                std::cout << "Is true......" << std::endl;
+            else
+                std::cout << "Is false......" << std::endl;
 
             mstch::map txd_map = {
                 {"hash", pod_to_hex(hash)},
