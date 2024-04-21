@@ -482,7 +482,7 @@ namespace xmreg
             // Private Transactions
             {
                 if (index == 0)
-                    return "Y";
+                    return "N";
                 else
                     return "";
             }
@@ -516,7 +516,6 @@ namespace xmreg
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
                     }
-                    std::cout << printer.get_stored_value() << std::endl;
                 }
             }
             return "";
