@@ -364,15 +364,16 @@ namespace xmreg
                 payed_for_kB_micro_str = fmt::format("{:04.0f}", payed_for_kB * 1e6);
             }
 
-            void update_public_tx_status() {
-            
+            void update_public_tx_status()
+            {
             }
 
-            mstch::map txd_map
+            mstch::map get_txd_map()
             {
                 update_public_tx_status();
 
-                {"hash", pod_to_hex(hash)},
+                mstch::map txd_map = {
+                    {"hash", pod_to_hex(hash)},
                     {"prefix_hash", pod_to_hex(prefix_hash)},
                     {"pub_key", pod_to_hex(pk)},
                     {"tx_fee", fee_str},
@@ -405,18 +406,15 @@ namespace xmreg
                     {"unlock_time", unlock_time},
                     {"tx_size", fmt::format("{:0.4f}", tx_size)},
                     {"tx_size_short", fmt::format("{:0.2f}", tx_size)},
-                {
-                    "has_add_pks", !additional_pks.empty()
-                }
-            };
-
+                    {"has_add_pks", !additional_pks.empty()}};
+            }
             return txd_map;
         }
 
-//        bool compute_public_tx_flag() const
-//        {
-//            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
-//        }
+        //        bool compute_public_tx_flag() const
+        //        {
+        //            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
+        //        }
 
         string
         get_extra_str() const
