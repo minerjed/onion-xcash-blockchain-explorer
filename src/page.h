@@ -319,6 +319,7 @@ namespace xmreg
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
+        vector<uint8_t> extra_pub_flag;
         vector<uint8_t> extra_pub_txId;
         vector<uint8_t> extra_pub_txSig;
 
@@ -384,6 +385,7 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
+                {"extra_pub_flag", get_pub_flag_str()},
                 {"extra_pub_txId", get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"payment_id8", pod_to_hex(payment_id8)},
@@ -398,6 +400,24 @@ namespace xmreg
         string
         get_extra_str() const
         {
+            return epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+        }
+
+        string
+        get_pub_flag_str() const
+        {
+            std::string hexString = stringToHex(XCASH_SIGN_DATA_PREFIX);
+            std::string extra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            if (pos != std::string::npos)
+            {
+                std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
+            }
+            else
+            {
+                std::cout << "String 'SigV1' not found." << std::endl;
+            }
             return epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
         }
@@ -5850,6 +5870,7 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
+                {"extra_pub_flag", txd.get_pub_flag_str()},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
@@ -6011,6 +6032,7 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
+                {"extra_pub_flag", txd.get_pub_flag_str()},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"with_ring_signatures", static_cast<bool>(
