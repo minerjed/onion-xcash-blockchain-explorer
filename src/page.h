@@ -319,8 +319,9 @@ namespace xmreg
         uint64_t unlock_time;
         uint64_t no_confirmations;
         vector<uint8_t> extra;
-        //      vector<uint8_t> extra_pub_tx;
-        vector<uint8_t> extra_pub_txid;
+        vector<uint8_t> extra_pub_txId;
+        vector<uint8_t> extra_pub_txSig;
+
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -383,7 +384,8 @@ namespace xmreg
                 {"payment_id", pod_to_hex(payment_id)},
                 {"confirmations", no_confirmations},
                 {"extra", get_extra_str()},
-                {"extra_pub_txid", get_extra_public_tx_str(1)},
+                {"extra_pub_txId", get_extra_public_tx_str(1)},
+                {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -472,9 +474,16 @@ namespace xmreg
                     boost::apply_visitor(printer, field);
                     if (!printer.get_stored_value().empty())
                     {
-                        wcnt ++;
+                        wcnt++;
                         if (wcnt == 1)
-                        {   std::string x;
+                        {
+                            std::string x;
+                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
+                            std::cout << "X=" << x << std::endl;
+                            return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
+                        }
+                        else if (wcnt == 2)
+                        {
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                             std::cout << "X=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
@@ -5840,7 +5849,8 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_txid", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
@@ -6000,7 +6010,8 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_txid", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
+                {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"with_ring_signatures", static_cast<bool>(
                                              with_ring_signatures)},
                 {"tx_json", tx_json},
