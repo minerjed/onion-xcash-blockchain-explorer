@@ -325,6 +325,7 @@ namespace xmreg
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
         bool have_public_tx = (extra_pub_flag == 'Y');
+        
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
