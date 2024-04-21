@@ -484,6 +484,7 @@ namespace xmreg
                         }
                         else if (wcnt == 2)
                         {
+                            std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                             std::cout << "X=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
