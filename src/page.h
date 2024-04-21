@@ -322,7 +322,8 @@ namespace xmreg
         vector<uint8_t> extra_pub_flag;
         vector<uint8_t> extra_pub_txId;
         vector<uint8_t> extra_pub_txSig;
-
+        vector<uint8_t> extra_pub_txTo;
+        vector<uint8_t> extra_pub_txFrom;
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -388,6 +389,8 @@ namespace xmreg
                 {"extra_pub_flag", get_extra_public_tx_str(0)},
                 {"extra_pub_txId", get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
+                {"extra_pub_txTo", get_extra_public_tx_str(3)},
+                {"extra_pub_txFrom", get_extra_public_tx_str(4)},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
@@ -5871,6 +5874,8 @@ namespace xmreg
                 {"extra_pub_flag", txd.get_extra_public_tx_str(0)},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
+                {"extra_pub_txTo", txd.get_extra_public_tx_str(3)},
+                {"extra_pub_txFrom", tx.get_extra_public_tx_str(4)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
@@ -6033,6 +6038,8 @@ namespace xmreg
                 {"extra_pub_flag", txd.get_extra_public_tx_str(0)},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
+                {"extra_pub_txTo", txd.get_extra_public_tx_str(3)},
+                {"extra_pub_txFrom", txd.get_extra_public_tx_str(4)},
                 {"with_ring_signatures", static_cast<bool>(
                                              with_ring_signatures)},
                 {"tx_json", tx_json},
