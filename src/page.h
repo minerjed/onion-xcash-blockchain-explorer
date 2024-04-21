@@ -417,36 +417,6 @@ namespace xmreg
             return ascii_str;
         }
 
-        string
-        get_pub_flag_str() const
-        {
-
-            std::cout << "Enter get_pub_flag\n";
-
-            std::ostringstream hexStream;
-            hexStream << std::hex << std::setfill('0');
-            for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
-            {
-                hexStream << std::setw(2) << static_cast<int>(c);
-            }
-            std::string hexString = hexStream.str();
-            std::regex trailingZerosPattern("(00)+$"); // Matches trailing "00" that repeat
-            hexString = std::regex_replace(hexString, trailingZerosPattern, "");
-            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
-                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            size_t pos = wsextra.find(hexString);
-            if (pos != std::string::npos)
-            {
-                std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
-            }
-            else
-            {
-                std::cout << "String 'SigV1' not found." << std::endl;
-            }
-
-            return "";
-        }
-
         struct nonce_field_printer : public boost::static_visitor<void>
         {
             mutable std::string stored_value;
@@ -5906,7 +5876,7 @@ namespace xmreg
                 {"coinbase", is_coinbase(tx)},
                 {"mixin", txd.mixin_no},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_flag", txd.get_pub_flag_str()},
+                {"extra_pub_flag", txd.get_extra_public_tx_str(0)},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
@@ -6068,7 +6038,7 @@ namespace xmreg
                 {"payment_id", pid_str},
                 {"payment_id8", pid8_str},
                 {"extra", txd.get_extra_str()},
-                {"extra_pub_flag", txd.get_pub_flag_str()},
+                {"extra_pub_flag", txd.get_extra_public_tx_str(0)},
                 {"extra_pub_txId", txd.get_extra_public_tx_str(1)},
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"with_ring_signatures", static_cast<bool>(
