@@ -420,6 +420,7 @@ namespace xmreg
         string
         get_pub_flag_str() const
         {
+
             std::cout << "Enter get_pub_flag\n";
 
             std::ostringstream hexStream;
@@ -428,10 +429,11 @@ namespace xmreg
             {
                 hexStream << std::setw(2) << static_cast<int>(c);
             }
-            std::cout << hexStream.str() << std::endl;
+            std::string hexString = hexStream.str();
+            std::regex trailingZerosPattern("(00)+$"); // Matches trailing "00" that repeat
+            hexString = std::regex_replace(hexString, trailingZerosPattern, "");
             std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                 string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            std::string hexString = hexStream.str();
             size_t pos = wsextra.find(hexString);
             if (pos != std::string::npos)
             {
