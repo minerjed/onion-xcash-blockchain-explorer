@@ -324,7 +324,7 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
-        bool have_public_tx = false;
+        bool have_public_tx;
 
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
@@ -393,6 +393,7 @@ namespace xmreg
                 {"extra_pub_txSig", get_extra_public_tx_str(2)},
                 {"extra_pub_txTo", get_extra_public_tx_str(3)},
                 {"extra_pub_txFrom", get_extra_public_tx_str(4)},
+                {"have_public_tx", have_public_tx},
                 {"payment_id8", pod_to_hex(payment_id8)},
                 {"unlock_time", unlock_time},
                 {"tx_size", fmt::format("{:0.4f}", tx_size)},
