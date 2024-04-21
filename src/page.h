@@ -505,13 +505,13 @@ namespace xmreg
             if (pos != std::string::npos)
             // Public Transaction
             {
-                if (indx == 0)
+                if (index == 0)
                     return "Y";
             }
             else
             // Private Transactions
             {
-                if (indx == 0)
+                if (index == 0)
                     return "Y";
                 else
                     return "";
