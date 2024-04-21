@@ -505,14 +505,7 @@ namespace xmreg
                         {
                             std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-                            std::cout << "indx=" << wcnt << "txid=" << x << std::endl;
-                            return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-                        }
-                        else if (wcnt == index)
-                        {
-                            std::string x;
-                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-                            std::cout "indx=" << wcnt << "sig=" << x << std::endl;
+                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
                     }
