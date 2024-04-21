@@ -324,6 +324,7 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
+        bool have_public_tx = (extra_pub_flag == 'Y');
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -2775,15 +2776,12 @@ namespace xmreg
                 unsigned_tx_given = true;
             }
 
-            bool have_public_tx = (txd.extra_pub_flag == 'Y');
-
             // initalize page template context map
             mstch::map context{
                 {"testnet", testnet},
                 {"stagenet", stagenet},
                 {"unsigned_tx_given", unsigned_tx_given},
                 {"have_raw_tx", true},
-                {"have_public_tx", false},
                 {"has_error", false},
                 {"error_msg", string{}},
                 {"data_prefix", data_prefix},
