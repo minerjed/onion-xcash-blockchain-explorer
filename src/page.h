@@ -430,21 +430,20 @@ namespace xmreg
             }
 
             std::cout << hexStream.str() << std::endl;
-            /*
-                        std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
-                            string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
-                        size_t pos = wsextra.find(hexString);
-                        if (pos != std::string::npos)
-                        {
-                            std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
-                        }
-                        else
-                        {
-                            std::cout << "String 'SigV1' not found." << std::endl;
-                        }
-                        return epee::string_tools::buff_to_hex_nodelimer(
-                            string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-            */
+
+            std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
+                string{reinterpret_cast<const char *>(extra.data()), extra.size()});
+            ;
+            size_t pos = wsextra.find(hexString.str());
+            if (pos != std::string::npos)
+            {
+                std::cout << "Found 'SigV1' at position: " << pos / 2 << " (byte position in original string)" << std::endl;
+            }
+            else
+            {
+                std::cout << "String 'SigV1' not found." << std::endl;
+            }
+
             return "";
         }
 
