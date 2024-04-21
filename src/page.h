@@ -5857,25 +5857,6 @@ namespace xmreg
             return true;
         }
 
-        bool have_public_tx = false;
-        std::ostringstream hexStream;
-        hexStream << std::hex << std::setfill('0');
-        for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
-        {
-            hexStream << std::setw(2) << static_cast<int>(c);
-        }
-        std::string hexString = hexStream.str();
-        std::regex trailingZerosPattern("(00)+$");
-        std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
-            string{reinterpret_cast<const char *>(extra.data()), extra.size()});
-        size_t pos = wsextra.find(hexString);
-        if (pos != std::string::npos)
-            have_public_tx = true;
-        if (have_public_tx)
-            std::cout << "Is true......" << std::endl;
-        else
-            std::cout << "Is false......" << std::endl;
-
         json
         get_tx_json(const transaction &tx, const tx_details &txd)
         {
@@ -5897,7 +5878,6 @@ namespace xmreg
                 {"extra_pub_txSig", txd.get_extra_public_tx_str(2)},
                 {"extra_pub_txTo", txd.get_extra_public_tx_str(3)},
                 {"extra_pub_txFrom", txd.get_extra_public_tx_str(4)},
-                {"have_public_tx", have_public_tx},
                 {"payment_id", (txd.payment_id != null_hash ? pod_to_hex(txd.payment_id) : "")},
                 {"payment_id8", (txd.payment_id8 != null_hash8 ? pod_to_hex(txd.payment_id8) : "")}};
 
