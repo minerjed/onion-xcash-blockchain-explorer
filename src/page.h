@@ -429,8 +429,7 @@ namespace xmreg
                 hexStream << std::setw(2) << static_cast<int>(c);
             }
 
-//            std::string hexString = convert_string_to_hex(XCASH_SIGN_DATA_PREFIX);
-//            std::cout << hexString;
+            std::cout << hexString;
             /*
                         std::string wsextra = epee::string_tools::buff_to_hex_nodelimer(
                             string{reinterpret_cast<const char *>(extra.data()), extra.size()});;
