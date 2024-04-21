@@ -2775,7 +2775,7 @@ namespace xmreg
                 unsigned_tx_given = true;
             }
 
-            bool have_public_tx = (extra_pub_flag == 'Y');
+            bool have_public_tx = (txd.extra_pub_flag == 'Y');
 
             // initalize page template context map
             mstch::map context{
