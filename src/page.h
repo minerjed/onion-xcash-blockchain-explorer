@@ -364,6 +364,15 @@ namespace xmreg
                 payed_for_kB_micro_str = fmt::format("{:04.0f}", payed_for_kB * 1e6);
             }
 
+            std::ostringstream hexStream;
+            hexStream << std::hex << std::setfill('0');
+            for (unsigned char c : XCASH_SIGN_DATA_PREFIX)
+            {
+                hexStream << std::setw(2) << static_cast<int>(c);
+            }
+            std::string hexString = hexStream.str();
+            std::regex trailingZerosPattern("(00)+$");
+
             mstch::map txd_map = {
                 {"hash", pod_to_hex(hash)},
                 {"prefix_hash", pod_to_hex(prefix_hash)},
@@ -402,11 +411,6 @@ namespace xmreg
 
             return txd_map;
         }
-
-        //        bool compute_public_tx_flag() const
-        //        {
-        //            return (!extra_pub_flag.empty() && extra_pub_flag[0] == static_cast<uint8_t>('Y'));
-        //        }
 
         string
         get_extra_str() const
