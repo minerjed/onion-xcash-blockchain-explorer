@@ -2757,6 +2757,7 @@ namespace xmreg
         string
         show_checkrawtx(string raw_tx_data, string action)
         {
+
             clean_post_data(raw_tx_data);
 
             string decoded_raw_tx_data = epee::string_encoding::base64_decode(raw_tx_data);
@@ -2774,12 +2775,15 @@ namespace xmreg
                 unsigned_tx_given = true;
             }
 
+            bool have_public_tx = (extra_pub_flag == 'Y');
+
             // initalize page template context map
             mstch::map context{
                 {"testnet", testnet},
                 {"stagenet", stagenet},
                 {"unsigned_tx_given", unsigned_tx_given},
                 {"have_raw_tx", true},
+                {"have_public_tx", false},
                 {"has_error", false},
                 {"error_msg", string{}},
                 {"data_prefix", data_prefix},
