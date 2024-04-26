@@ -508,9 +508,9 @@ namespace xmreg
                         if (wcnt == index)
                         {
 // jed                            
-//                            std::string x;
-//                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-//                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
+                            std::string x;
+                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
+                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
                     }
@@ -1361,6 +1361,7 @@ namespace xmreg
             return mstch::render(template_file["randomx"], context);
         }
 
+// jed *****************************************************************************
         string
         show_tx(string tx_hash_str, uint16_t with_ring_signatures = 0, bool refresh_page = false)
         {
@@ -1373,9 +1374,6 @@ namespace xmreg
                 cerr << "Cant parse tx hash: " << tx_hash_str << endl;
                 return string("Cant get tx hash due to parse error: " + tx_hash_str);
             }
-
-// jed *****************************************************************************
-
 
             // tx age
             pair<string, string> age;
@@ -1932,13 +1930,13 @@ namespace xmreg
                         bool tx_prove = false)
         {
 
-        vector<uint8_t> extra_pub_flag;
+//        vector<uint8_t> extra_pub_flag;
 //        vector<uint8_t> extra_pub_txSig;
 //        vector<uint8_t> extra_pub_txTo;
 
-            extra_pub_flag = txd.get_extra_public_tx_str(0);
-            std::string flagAsString(reinterpret_cast<const char*>(extra_pub_flag.data()), extra_pub_flag.size());
-            std::cout << "flag=" << flagAsString << std::endl;
+//            extra_pub_flag = txd.get_extra_public_tx_str(0);
+//            std::string flagAsString(reinterpret_cast<const char*>(extra_pub_flag.data()), extra_pub_flag.size());
+//            std::cout << "flag=" << flagAsString << std::endl;
 
             // remove white characters
             boost::trim(tx_hash_str);
