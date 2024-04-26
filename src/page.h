@@ -507,7 +507,7 @@ namespace xmreg
                         wcnt++;
                         if (wcnt == index)
                         {
-// jed                            
+// jed
                             std::string x;
                             x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                             std::cout << "indx=" << wcnt << "str=" << x << std::endl;
@@ -1930,15 +1930,6 @@ namespace xmreg
                         bool tx_prove = false)
         {
 
-//        vector<uint8_t> extra_pub_flag;
-//        vector<uint8_t> extra_pub_txSig;
-//        vector<uint8_t> extra_pub_txTo;
-
-//            extra_pub_flag = txd.get_extra_public_tx_str(0);
-//            std::string flagAsString(reinterpret_cast<const char*>(extra_pub_flag.data()), extra_pub_flag.size());
-//            std::cout << "flag=" << flagAsString << std::endl;
-//
-
             // remove white characters
             boost::trim(tx_hash_str);
             boost::trim(xmr_address_str);
@@ -2089,6 +2080,11 @@ namespace xmreg
             }
 
             tx_details txd = get_tx_details(tx);
+
+// jed jed
+            std::string x;
+            x = std::string{reinterpret_cast<const char *>(txd.extra_pub_flag().data()), txd.extra_pub_flag().size()};
+            std::cout << "flag=" << x << std::endl;
 
             uint64_t tx_blk_height{0};
 
