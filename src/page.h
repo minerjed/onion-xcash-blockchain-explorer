@@ -1937,6 +1937,7 @@ namespace xmreg
 //            extra_pub_flag = txd.get_extra_public_tx_str(0);
 //            std::string flagAsString(reinterpret_cast<const char*>(extra_pub_flag.data()), extra_pub_flag.size());
 //            std::cout << "flag=" << flagAsString << std::endl;
+//
 
             // remove white characters
             boost::trim(tx_hash_str);
