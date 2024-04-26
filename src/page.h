@@ -2082,9 +2082,9 @@ namespace xmreg
             tx_details txd = get_tx_details(tx);
 
 // jed jed
-            std::string x;
-            x = std::string{reinterpret_cast<const char *>(txd.extra_pub_flag.data), txd.extra_pub_flag.size};
-            std::cout << "flag=" << x << std::endl;
+
+            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
+            std::cout << "flag=" << flagAsString << std::endl;
 
             uint64_t tx_blk_height{0};
 
