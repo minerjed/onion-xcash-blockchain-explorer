@@ -1936,7 +1936,7 @@ namespace xmreg
 //        vector<uint8_t> extra_pub_txSig;
 //        vector<uint8_t> extra_pub_txTo;
 
-            extra_pub_flag" = txd.get_extra_public_tx_str(0);
+            extra_pub_flag = txd.get_extra_public_tx_str(0);
             std::string flagAsString(reinterpret_cast<const char*>(extra_pub_flag.data()), extra_pub_flag.size());
             std::cout << "flag=" << flagAsString << std::endl;
 
