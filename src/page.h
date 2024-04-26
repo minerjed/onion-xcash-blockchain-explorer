@@ -2083,7 +2083,7 @@ namespace xmreg
 
 // jed jed
             std::string x;
-            x = std::string{reinterpret_cast<const char *>(txd.extra_pub_flag().data()), txd.extra_pub_flag().size()};
+            x = std::string{reinterpret_cast<const char *>(txd.extra_pub_flag.data), txd.extra_pub_flag.size};
             std::cout << "flag=" << x << std::endl;
 
             uint64_t tx_blk_height{0};
