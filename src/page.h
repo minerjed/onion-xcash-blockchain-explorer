@@ -507,9 +507,10 @@ namespace xmreg
                         wcnt++;
                         if (wcnt == index)
                         {
-                            std::string x;
-                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
+// jed                            
+//                            std::string x;
+//                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
+//                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
                     }
@@ -1373,6 +1374,9 @@ namespace xmreg
                 return string("Cant get tx hash due to parse error: " + tx_hash_str);
             }
 
+// jed *****************************************************************************
+
+
             // tx age
             pair<string, string> age;
 
@@ -1917,6 +1921,8 @@ namespace xmreg
             return tx_json;
         }
 
+
+// jed *****************************************************************************
         string
         show_my_outputs(string tx_hash_str,
                         string xmr_address_str,
@@ -1925,6 +1931,14 @@ namespace xmreg
                         string domain,
                         bool tx_prove = false)
         {
+
+//        vector<uint8_t> extra_pub_flag;
+//        vector<uint8_t> extra_pub_txSig;
+//        vector<uint8_t> extra_pub_txTo;
+
+
+            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
+            std::cout << "flag=" << flagAsString << std::endl;
 
             // remove white characters
             boost::trim(tx_hash_str);
