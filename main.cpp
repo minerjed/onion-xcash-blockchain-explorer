@@ -512,6 +512,40 @@ main(int ac, const char* av[])
     });
 
 
+
+    CROW_ROUTE(app, "/public").methods("POST"_method)
+        ([&](const crow::request& req) -> myxmr::htmlresponse 
+         {
+
+            map<std::string, std::string> post_body
+                    = xmreg::parse_crow_post_data(req.body);
+
+            if (post_body.count("xmraddress") == 0
+                || post_body.count("txprvkey") == 0
+                || post_body.count("txhash") == 0)
+            {
+                return string("xmr address, tx private key or "
+                                      "tx hash not provided");
+            }
+
+            string tx_hash     = remove_bad_chars(post_body["txhash"]);
+            string tx_prv_key  = remove_bad_chars(post_body["txprvkey"]);
+            string xmr_address = remove_bad_chars(post_body["xmraddress"]);
+
+            // this will be only not empty when checking raw tx data
+            // using tx pusher
+            string raw_tx_data = remove_bad_chars(post_body["raw_tx_data"]);
+
+            string domain      = get_domain(req);
+
+            return myxmr::htmlresponse(xmrblocks.show_prove(tx_hash,
+                                        xmr_address,
+                                        tx_prv_key,
+                                        raw_tx_data,
+                                        domain));
+    });
+
+
     CROW_ROUTE(app, "/prove/<string>/<string>/<string>")
     ([&](const crow::request& req, string tx_hash,
          string xmr_address, string tx_prv_key) 
