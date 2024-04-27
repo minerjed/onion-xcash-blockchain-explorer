@@ -52,18 +52,21 @@
         </tr>
 
         {{#extra_pub_txId}}
-        <tr><td>
-        <form action="/public" method="post" style="width:100%;margin-top:2px" class="style-1">
-            <input type="hidden" name="txhash" value="{{tx_hash}}"><br/>
-            <input type="hidden" name="txprvkey" value="{{extra_pub_txId}}"><br/>
-             <input type="hidden" name="raw_tx_data" value="{{raw_tx_data}}">
-             <!--above raw_tx_data field only used when checking raw tx data through tx pusher-->
-            <input type="hidden" name="xmraddress" value="{{extra_pub_txTo}}"><br/>
-            <div style="text-align: center;">
-                <input type="submit" value="View Public Transaction Information" style="margin-top:5px">
-            </div>
-         </form>
-         </td></tr>
+        <tr>
+            <td style="text-align: center;">
+                <form action="/public" method="post" style="width:100%; margin-top:2px" class="style-1">
+                    <!-- Hidden Inputs -->
+                    <input type="hidden" name="txhash" value="{{tx_hash}}">
+                    <input type="hidden" name="txprvkey" value="{{extra_pub_txId}}">
+                    <input type="hidden" name="raw_tx_data" value="{{raw_tx_data}}">
+                    <input type="hidden" name="xmraddress" value="{{extra_pub_txTo}}">
+                    <!-- Submit Button -->
+                    <div style="text-align: center;">
+                        <input type="submit" value="View Public Transaction Information" style="margin-top:5px">
+                    </div>
+                </form>
+            </td>
+        </tr>        
         {{/extra_pub_txId}}
 
     </table>
