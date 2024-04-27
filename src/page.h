@@ -2724,828 +2724,6 @@ namespace xmreg
             return mstch::render(template_file["my_outputs"], context);
         }
 
-/jed **********************************************************
-
-
-        string
-//        show_my_outputs(string tx_hash_str,
-        show_pub_info(string tx_hash_str,
-                        string xmr_address_str,
-                        string viewkey_str, /* or tx_prv_key_str when tx_prove == true */
-                        string raw_tx_data,
-                        string domain,
-                        bool tx_prove = false)
-        {
-
-            //jed
-//            std::string flagAsString(reinterpret_cast<const char*>(tx.extra_pub_flag.data()), tx.extra_pub_flag.size());
-//            std::cout << "flag=" << flagAsString << std::endl;
-            std::cout << "Show_my_outputs" << std::endl;
-
-            // remove white characters
-            boost::trim(tx_hash_str);
-            boost::trim(xmr_address_str);
-            boost::trim(viewkey_str);
-            boost::trim(raw_tx_data);
-
-            (void)domain; // not used
-
-            if (tx_hash_str.empty())
-            {
-                return string("tx hash not provided!");
-            }
-
-            if (xmr_address_str.empty())
-            {
-                return string("Monero address not provided!");
-            }
-
-            if (viewkey_str.empty())
-            {
-                if (!tx_prove)
-                    return string("Viewkey not provided!");
-                else
-                    return string("Tx private key not provided!");
-            }
-
-            // parse tx hash string to hash object
-            crypto::hash tx_hash;
-
-            if (!xmreg::parse_str_secret_key(tx_hash_str, tx_hash))
-            {
-                cerr << "Cant parse tx hash: " << tx_hash_str << endl;
-                return string("Cant get tx hash due to parse error: " + tx_hash_str);
-            }
-
-            // parse string representing given monero address
-            cryptonote::address_parse_info address_info;
-
-            if (!xmreg::parse_str_address(xmr_address_str, address_info, nettype))
-            {
-                cerr << "Cant parse string address: " << xmr_address_str << endl;
-                return string("Cant parse xmr address: " + xmr_address_str);
-            }
-
-            // parse string representing given private key
-            crypto::secret_key prv_view_key;
-
-            std::vector<crypto::secret_key> multiple_tx_secret_keys;
-
-            if (!xmreg::parse_str_secret_key(viewkey_str, multiple_tx_secret_keys))
-            {
-                cerr << "Cant parse the private key: " << viewkey_str << endl;
-                return string("Cant parse private key: " + viewkey_str);
-            }
-            if (multiple_tx_secret_keys.size() == 1)
-            {
-                prv_view_key = multiple_tx_secret_keys[0];
-            }
-            else if (!tx_prove)
-            {
-                cerr << "Concatenated secret keys are only for tx proving!" << endl;
-                return string("Concatenated secret keys are only for tx proving!");
-            }
-
-            // just to see how would having spend keys could worked
-            // this is from testnet wallet: A2VTvE8bC9APsWFn3mQzgW8Xfcy2SP2CRUArD6ZtthNaWDuuvyhtBcZ8WDuYMRt1HhcnNQvpXVUavEiZ9waTbyBhP6RM8TV
-            // view key: 041a241325326f9d86519b714a9b7f78b29111551757eeb6334d39c21f8b7400
-            // example tx: 430b070e213659a864ec82d674fddb5ccf7073cae231b019ba1ebb4bfdc07a15
-            //        string spend_key_str("643fedcb8dca1f3b406b84575ecfa94ba01257d56f20d55e8535385503dacc08");
-            //
-            //        crypto::secret_key prv_spend_key;
-            //        if (!xmreg::parse_str_secret_key(spend_key_str, prv_spend_key))
-            //        {
-            //            cerr << "Cant parse the prv_spend_key : " << spend_key_str << endl;
-            //            return string("Cant parse prv_spend_key : " + spend_key_str);
-            //        }
-
-            // tx age
-            pair<string, string> age;
-
-            string blk_timestamp{"N/A"};
-
-            // get transaction
-            transaction tx;
-
-            if (!raw_tx_data.empty())
-            {
-                // we want to check outputs of tx submited through tx pusher.
-                // it is raw tx data, it is not in blockchain nor in mempool.
-                // so we need to reconstruct tx object from this string
-
-                cryptonote::blobdata tx_data_blob;
-
-                if (!epee::string_tools::parse_hexstr_to_binbuff(raw_tx_data, tx_data_blob))
-                {
-                    string msg = fmt::format("Cant obtain tx_data_blob from raw_tx_data");
-
-                    cerr << msg << endl;
-
-                    return msg;
-                }
-
-                crypto::hash tx_hash_from_blob;
-                crypto::hash tx_prefix_hash_from_blob;
-
-                if (!cryptonote::parse_and_validate_tx_from_blob(tx_data_blob,
-                                                                 tx,
-                                                                 tx_hash_from_blob,
-                                                                 tx_prefix_hash_from_blob))
-                {
-                    string msg = fmt::format("cant parse_and_validate_tx_from_blob");
-
-                    cerr << msg << endl;
-
-                    return msg;
-                }
-            }
-            else if (!mcore->get_tx(tx_hash, tx))
-            {
-                cerr << "Cant get tx in blockchain: " << tx_hash
-                     << ". \n Check mempool now" << endl;
-
-                vector<MempoolStatus::mempool_tx> found_txs;
-
-                search_mempool(tx_hash, found_txs);
-
-                if (!found_txs.empty())
-                {
-                    // there should be only one tx found
-                    tx = found_txs.at(0).tx;
-
-                    // since its tx in mempool, it has no blk yet
-                    // so use its recive_time as timestamp to show
-
-                    uint64_t tx_recieve_timestamp = found_txs.at(0).receive_time;
-
-                    blk_timestamp = xmreg::timestamp_to_str_gm(tx_recieve_timestamp);
-
-                    age = get_age(server_timestamp,
-                                  tx_recieve_timestamp,
-                                  FULL_AGE_FORMAT);
-                }
-                else
-                {
-                    // tx is nowhere to be found :-(
-                    return string("Cant get tx: " + tx_hash_str);
-                }
-            }
-
-            tx_details txd = get_tx_details(tx);
-
-            uint64_t tx_blk_height{0};
-
-            bool tx_blk_found{false};
-
-            try
-            {
-                tx_blk_height = core_storage->get_db().get_tx_block_height(tx_hash);
-                tx_blk_found = true;
-            }
-            catch (exception &e)
-            {
-                cerr << "Cant get block height: " << tx_hash
-                     << e.what() << endl;
-            }
-
-            // get block cointaining this tx
-            block blk;
-
-            if (tx_blk_found && !mcore->get_block_by_height(tx_blk_height, blk))
-            {
-                cerr << "Cant get block: " << tx_blk_height << endl;
-            }
-
-            string tx_blk_height_str{"N/A"};
-
-            if (tx_blk_found)
-            {
-                // calculate difference between tx and server timestamps
-                age = get_age(server_timestamp, blk.timestamp, FULL_AGE_FORMAT);
-
-                blk_timestamp = xmreg::timestamp_to_str_gm(blk.timestamp);
-
-                tx_blk_height_str = std::to_string(tx_blk_height);
-            }
-
-            // payments id. both normal and encrypted (payment_id8)
-            string pid_str = pod_to_hex(txd.payment_id);
-            string pid8_str = pod_to_hex(txd.payment_id8);
-
-            string shortcut_url = tx_prove
-                                      ? string("/public")
-                                      : string("/myoutputs") + '/' + tx_hash_str + '/' + xmr_address_str + '/' + viewkey_str;
-
-            string viewkey_str_partial = viewkey_str;
-
-            // dont show full private keys. Only file first and last letters
-            for (size_t i = 3; i < viewkey_str_partial.length() - 2; ++i)
-                viewkey_str_partial[i] = '*';
-
-            // initalise page tempate map with basic info about blockchain
-            mstch::map context{
-                {"testnet", testnet},
-                {"stagenet", stagenet},
-                {"tx_hash", tx_hash_str},
-                {"tx_prefix_hash", pod_to_hex(txd.prefix_hash)},
-                {"xmr_address", xmr_address_str},
-                {"viewkey", viewkey_str_partial},
-                {"tx_pub_key", pod_to_hex(txd.pk)},
-                {"blk_height", tx_blk_height_str},
-                {"tx_size", fmt::format("{:0.4f}",
-                                        static_cast<double>(txd.size) / 1024.0)},
-                {"tx_fee", xmreg::xmr_amount_to_str(txd.fee, "{:0.12f}", true)},
-                {"blk_timestamp", blk_timestamp},
-                {"delta_time", age.first},
-                {"outputs_no", static_cast<uint64_t>(txd.output_pub_keys.size())},
-                {"has_payment_id", txd.payment_id != null_hash},
-                {"has_payment_id8", txd.payment_id8 != null_hash8},
-                {"payment_id", pid_str},
-                {"payment_id8", pid8_str},
-                {"decrypted_payment_id8", string{}},
-                {"tx_prove", tx_prove},
-                {"shortcut_url", shortcut_url}};
-
-            string server_time_str = xmreg::timestamp_to_str_gm(server_timestamp, "%F");
-
-            // public transaction key is combined with our viewkey
-            // to create, so called, derived key.
-            key_derivation derivation;
-            std::vector<key_derivation> additional_derivations(txd.additional_pks.size());
-
-            if (tx_prove && multiple_tx_secret_keys.size() != txd.additional_pks.size() + 1)
-            {
-                return string("This transaction includes additional tx pubkeys whose "
-                              "size doesn't match with the provided tx secret keys");
-            }
-
-            public_key pub_key = tx_prove ? address_info.address.m_view_public_key : txd.pk;
-
-            // cout << "txd.pk: " << pod_to_hex(txd.pk) << endl;
-
-            if (!generate_key_derivation(pub_key,
-                                         tx_prove ? multiple_tx_secret_keys[0] : prv_view_key,
-                                         derivation))
-            {
-                cerr << "Cant get derived key for: " << "\n"
-                     << "pub_tx_key: " << pub_key << " and "
-                     << "prv_view_key" << prv_view_key << endl;
-
-                return string("Cant get key_derivation");
-            }
-
-            for (size_t i = 0; i < txd.additional_pks.size(); ++i)
-            {
-                if (!generate_key_derivation(tx_prove ? pub_key : txd.additional_pks[i],
-                                             tx_prove ? multiple_tx_secret_keys[i + 1] : prv_view_key,
-                                             additional_derivations[i]))
-                {
-                    cerr << "Cant get derived key for: " << "\n"
-                         << "pub_tx_key: " << txd.additional_pks[i] << " and "
-                         << "prv_view_key" << prv_view_key << endl;
-
-                    return string("Cant get key_derivation");
-                }
-            }
-
-            // decrypt encrypted payment id, as used in integreated addresses
-            crypto::hash8 decrypted_payment_id8 = txd.payment_id8;
-
-            if (decrypted_payment_id8 != null_hash8)
-            {
-                if (mcore->get_device()->decrypt_payment_id(
-                        decrypted_payment_id8, pub_key, prv_view_key))
-                {
-                    context["decrypted_payment_id8"] = pod_to_hex(decrypted_payment_id8);
-                }
-            }
-
-            mstch::array outputs;
-
-            uint64_t sum_xmr{0};
-
-            std::vector<uint64_t> money_transfered(tx.vout.size(), 0);
-
-            // std::deque<rct::key> mask(tx.vout.size());
-
-            uint64_t output_idx{0};
-
-            for (output_tuple_with_tag &outp : txd.output_pub_keys)
-            {
-
-                // get the tx output public key
-                // that normally would be generated for us,
-                // if someone had sent us some xmr.
-                public_key tx_pubkey;
-
-                derive_public_key(derivation,
-                                  output_idx,
-                                  address_info.address.m_spend_public_key,
-                                  tx_pubkey);
-
-                //        cout << pod_to_hex(derivation) << ", " << output_idx << ", "
-                //             << pod_to_hex(address_info.address.m_spend_public_key) << ", "
-                //             << pod_to_hex(outp.first) << " == "
-                //             << pod_to_hex(tx_pubkey) << '\n'  << '\n';
-
-                // check if generated public key matches the current output's key
-                bool mine_output = (std::get<0>(outp) == tx_pubkey);
-
-                bool with_additional = false;
-
-                if (!mine_output && txd.additional_pks.size() == txd.output_pub_keys.size())
-                {
-                    derive_public_key(additional_derivations[output_idx],
-                                      output_idx,
-                                      address_info.address.m_spend_public_key,
-                                      tx_pubkey);
-
-                    mine_output = (std::get<0>(outp) == tx_pubkey);
-
-                    with_additional = true;
-                }
-
-                uint64_t xmr_amount = std::get<1>(outp);
-
-                // if mine output has RingCT, i.e., tx version is 2
-                if (mine_output && tx.version == 2)
-                {
-                    // cointbase txs have amounts in plain sight.
-                    // so use amount from ringct, only for non-coinbase txs
-                    if (!is_coinbase(tx))
-                    {
-
-                        // initialize with regular amount
-                        uint64_t rct_amount = money_transfered[output_idx];
-
-                        bool r;
-
-                        auto derivation_to_use = with_additional
-                                                     ? additional_derivations[output_idx]
-                                                     : derivation;
-
-                        r = decode_ringct(
-                            tx.rct_signatures,
-                            derivation_to_use,
-                            output_idx,
-                            tx.rct_signatures.ecdhInfo[output_idx].mask,
-                            rct_amount);
-
-                        if (!r)
-                        {
-                            cerr << "\nshow_my_outputs: Cant decode RingCT!\n";
-                        }
-
-                        // decode view key
-                        //                crypto::view_tag derived_view_tag;
-                        //                crypto::derive_view_tag(derivation_to_use,
-                        //                                        output_idx, derived_view_tag);
-
-                        //                cout << derived_view_tag << endl;
-
-                        xmr_amount = rct_amount;
-                        money_transfered[output_idx] = rct_amount;
-                    }
-                }
-
-                if (mine_output)
-                {
-                    sum_xmr += xmr_amount;
-                }
-
-                outputs.push_back(mstch::map{
-                    {"out_pub_key", pod_to_hex(std::get<0>(outp))},
-                    {"amount", xmreg::xmr_amount_to_str(xmr_amount)},
-                    {"mine_output", mine_output},
-                    {"output_idx", fmt::format("{:02d}", output_idx)}});
-
-                ++output_idx;
-            }
-
-            context.emplace("outputs", outputs);
-
-            context["found_our_outputs"] = (sum_xmr > 0);
-            context["sum_xmr"] = xmreg::xmr_amount_to_str(sum_xmr);
-
-            // we can also test ouputs used in mixins for key images
-            // this can show possible spending. Only possible, because
-            // without a spend key, we cant know for sure. It might be
-            // that our output was used by someone else for their mixins.
-
-            if (enable_mixin_guess)
-            {
-
-                bool show_key_images{false};
-
-                mstch::array inputs;
-
-                vector<txin_to_key> input_key_imgs = xmreg::get_key_images(tx);
-
-                // to hold sum of xmr in matched mixins, those that
-                // perfectly match mixin public key with outputs in mixn_tx.
-                uint64_t sum_mixin_xmr{0};
-
-                // this is used for the final check. we assument that number of
-                // parefct matches must be equal to number of inputs in a tx.
-                uint64_t no_of_matched_mixins{0};
-
-                // Hold all possible mixins that we found. This is only used so that
-                // we get number of all posibilities, and their total xmr amount
-                // (useful for unit testing)
-                //                     public_key    , amount
-                std::vector<std::pair<crypto::public_key, uint64_t>> all_possible_mixins;
-
-                for (const txin_to_key &in_key : input_key_imgs)
-                {
-                    // get absolute offsets of mixins
-                    std::vector<uint64_t> absolute_offsets = cryptonote::relative_output_offsets_to_absolute(
-                        in_key.key_offsets);
-
-                    // get public keys of outputs used in the mixins that match to the offests
-                    std::vector<cryptonote::output_data_t> mixin_outputs;
-
-                    try
-                    {
-                        // before proceeding with geting the outputs based on
-                        // the amount and absolute offset
-                        // check how many outputs there are for that amount
-                        // go to next input if a too large offset was found
-                        if (are_absolute_offsets_good(absolute_offsets, in_key) == false)
-                            continue;
-
-                        // core_storage->get_db().get_output_key(in_key.amount,
-                        // absolute_offsets,
-                        // mixin_outputs);
-
-                        get_output_key<BlockchainDB>(in_key.amount,
-                                                     absolute_offsets,
-                                                     mixin_outputs);
-                    }
-                    catch (const OUTPUT_DNE &e)
-                    {
-                        cerr << "get_output_keys: " << e.what() << endl;
-                        continue;
-                    }
-
-                    inputs.push_back(mstch::map{
-                        {"key_image", pod_to_hex(in_key.k_image)},
-                        {"key_image_amount", xmreg::xmr_amount_to_str(in_key.amount)},
-                        make_pair(string("mixins"), mstch::array{})});
-
-                    mstch::array &mixins = boost::get<mstch::array>(
-                        boost::get<mstch::map>(inputs.back())["mixins"]);
-
-                    // to store our mixins found for the given key image
-                    vector<map<string, string>> our_mixins_found;
-
-                    // mixin counter
-                    size_t count = 0;
-
-                    // there can be more than one our output used for mixin in a single
-                    // input. For example, if two outputs are matched (marked by *) in html,
-                    // one of them will be our real spending, and second will be used as a fake
-                    // one. ideally, to determine which is which, spendkey is required.
-                    // obvisouly we dont have it here, so we need to pick one in other way.
-                    // for now I will just pick the first one we find, and threat it as the
-                    // real spending output. The no_of_output_matches_found variable
-                    // is used for this purporse.
-                    // testnet tx 430b070e213659a864ec82d674fddb5ccf7073cae231b019ba1ebb4bfdc07a15
-                    // and testnet wallet details provided earier for spend key,
-                    // demonstrate this. this txs has one input that uses two of our ouputs.
-                    // without spent key, its imposible to know which one is real spendking
-                    // and which one is fake.
-                    size_t no_of_output_matches_found{0};
-
-                    // for each found output public key check if its ours or not
-                    for (const uint64_t &abs_offset : absolute_offsets)
-                    {
-
-                        // get basic information about mixn's output
-                        cryptonote::output_data_t output_data = mixin_outputs.at(count);
-
-                        tx_out_index tx_out_idx;
-
-                        try
-                        {
-                            // get pair pair<crypto::hash, uint64_t> where first is tx hash
-                            // and second is local index of the output i in that tx
-                            tx_out_idx = core_storage->get_db()
-                                             .get_output_tx_and_index(in_key.amount, abs_offset);
-                        }
-                        catch (const OUTPUT_DNE &e)
-                        {
-
-                            string out_msg = fmt::format(
-                                "Output with amount {:d} and index {:d} does not exist!",
-                                in_key.amount, abs_offset);
-
-                            cerr << out_msg << '\n';
-
-                            break;
-                        }
-
-                        string out_pub_key_str = pod_to_hex(output_data.pubkey);
-
-                        // cout << "out_pub_key_str: " << out_pub_key_str << endl;
-
-                        // get mixin transaction
-                        transaction mixin_tx;
-
-                        if (!mcore->get_tx(tx_out_idx.first, mixin_tx))
-                        {
-                            cerr << "Cant get tx: " << tx_out_idx.first << endl;
-                            break;
-                        }
-
-                        string mixin_tx_hash_str = pod_to_hex(tx_out_idx.first);
-
-                        mixins.push_back(mstch::map{
-                            {"mixin_pub_key", out_pub_key_str},
-                            make_pair<string, mstch::array>("mixin_outputs", mstch::array{}),
-                            {"has_mixin_outputs", false}});
-
-                        mstch::array &mixin_outputs = boost::get<mstch::array>(
-                            boost::get<mstch::map>(mixins.back())["mixin_outputs"]);
-
-                        mstch::node &has_mixin_outputs = boost::get<mstch::map>(mixins.back())["has_mixin_outputs"];
-
-                        bool found_something{false};
-
-                        public_key mixin_tx_pub_key = xmreg::get_tx_pub_key_from_received_outs(mixin_tx);
-
-                        std::vector<public_key> mixin_additional_tx_pub_keys = cryptonote::get_additional_tx_pub_keys_from_extra(mixin_tx);
-
-                        string mixin_tx_pub_key_str = pod_to_hex(mixin_tx_pub_key);
-
-                        // public transaction key is combined with our viewkey
-                        // to create, so called, derived key.
-                        key_derivation derivation;
-
-                        std::vector<key_derivation> additional_derivations(
-                            mixin_additional_tx_pub_keys.size());
-
-                        if (!generate_key_derivation(mixin_tx_pub_key,
-                                                     prv_view_key, derivation))
-                        {
-                            cerr << "Cant get derived key for: " << "\n"
-                                 << "pub_tx_key: " << mixin_tx_pub_key << " and "
-                                 << "prv_view_key" << prv_view_key << endl;
-
-                            continue;
-                        }
-                        for (size_t i = 0; i < mixin_additional_tx_pub_keys.size(); ++i)
-                        {
-                            if (!generate_key_derivation(mixin_additional_tx_pub_keys[i],
-                                                         prv_view_key,
-                                                         additional_derivations[i]))
-                            {
-                                cerr << "Cant get derived key for: " << "\n"
-                                     << "pub_tx_key: " << mixin_additional_tx_pub_keys[i]
-                                     << " and prv_view_key" << prv_view_key << endl;
-
-                                continue;
-                            }
-                        }
-
-                        //          <public_key  , amount  , out idx>
-                        vector<tuple<public_key, uint64_t, uint64_t>> output_pub_keys;
-
-                        output_pub_keys = xmreg::get_ouputs_tuple(mixin_tx);
-
-                        mixin_outputs.push_back(mstch::map{
-                            {"mix_tx_hash", mixin_tx_hash_str},
-                            {"mix_tx_pub_key", mixin_tx_pub_key_str},
-                            make_pair<string, mstch::array>("found_outputs", mstch::array{}),
-                            {"has_found_outputs", false}});
-
-                        mstch::array &found_outputs = boost::get<mstch::array>(
-                            boost::get<mstch::map>(
-                                mixin_outputs.back())["found_outputs"]);
-
-                        mstch::node &has_found_outputs = boost::get<mstch::map>(
-                            mixin_outputs.back())["has_found_outputs"];
-
-                        uint64_t ringct_amount{0};
-
-                        // for each output in mixin tx, find the one from key_image
-                        // and check if its ours.
-                        for (const auto &mix_out : output_pub_keys)
-                        {
-
-                            public_key const &output_pub_key = std::get<0>(mix_out);
-                            uint64_t amount = std::get<1>(mix_out);
-                            uint64_t output_idx_in_tx = std::get<2>(mix_out);
-
-                            // cout << " - " << pod_to_hex(output_pub_key) << endl;
-
-                            //                        // analyze only those output keys
-                            //                        // that were used in mixins
-                            //                        if (output_pub_key != output_data.pubkey)
-                            //                        {
-                            //                            continue;
-                            //                        }
-
-                            // get the tx output public key
-                            // that normally would be generated for us,
-                            // if someone had sent us some xmr.
-                            public_key tx_pubkey_generated;
-
-                            derive_public_key(derivation,
-                                              output_idx_in_tx,
-                                              address_info.address.m_spend_public_key,
-                                              tx_pubkey_generated);
-
-                            // check if generated public key matches the current output's key
-                            bool mine_output = (output_pub_key == tx_pubkey_generated);
-
-                            bool with_additional = false;
-
-                            if (!mine_output && mixin_additional_tx_pub_keys.size() == output_pub_keys.size())
-                            {
-                                derive_public_key(additional_derivations[output_idx_in_tx],
-                                                  output_idx_in_tx,
-                                                  address_info.address.m_spend_public_key,
-                                                  tx_pubkey_generated);
-
-                                mine_output = (output_pub_key == tx_pubkey_generated);
-
-                                with_additional = true;
-                            }
-
-                            if (mine_output && mixin_tx.version == 2)
-                            {
-                                // cointbase txs have amounts in plain sight.
-                                // so use amount from ringct, only for non-coinbase txs
-                                if (!is_coinbase(mixin_tx))
-                                {
-                                    // initialize with regular amount
-                                    uint64_t rct_amount = amount;
-
-                                    bool r;
-
-                                    auto derivation_to_use = with_additional
-                                                                 ? additional_derivations[output_idx]
-                                                                 : derivation;
-
-                                    r = decode_ringct(
-                                        mixin_tx.rct_signatures,
-                                        derivation_to_use,
-                                        output_idx_in_tx,
-                                        mixin_tx.rct_signatures.ecdhInfo[output_idx_in_tx].mask,
-                                        rct_amount);
-
-                                    if (!r)
-                                        cerr << "show_my_outputs: key images: "
-                                                "Cant decode RingCT!\n";
-
-                                    amount = rct_amount;
-
-                                } // if (mine_output && mixin_tx.version == 2)
-                            }
-
-                            // makre only
-                            bool output_match = (output_pub_key == output_data.pubkey);
-
-                            // mark only first output_match as the "real" one
-                            // due to luck of better method of gussing which output
-                            // is real if two are found in a single input.
-                            output_match = output_match && no_of_output_matches_found == 0;
-
-                            // save our mixnin's public keys
-                            found_outputs.push_back(mstch::map{
-                                {"my_public_key", pod_to_hex(output_pub_key)},
-                                {"tx_hash", tx_hash_str},
-                                {"mine_output", mine_output},
-                                {"out_idx", output_idx_in_tx},
-                                {"formed_output_pk", out_pub_key_str},
-                                {"out_in_match", output_match},
-                                {"amount", xmreg::xmr_amount_to_str(amount)}});
-
-                            // cout << "output_pub_key == output_data.pubkey" << endl;
-
-                            if (mine_output)
-                            {
-                                found_something = true;
-                                show_key_images = true;
-
-                                // increase sum_mixin_xmr only when
-                                // public key of an outputs used in ring signature,
-                                // matches a public key in a mixin_tx
-                                if (output_pub_key != output_data.pubkey)
-                                    continue;
-
-                                // sum up only first output matched found in each input
-                                if (no_of_output_matches_found == 0)
-                                {
-                                    // for regular txs, just concentrated on outputs
-                                    // which have same amount as the key image.
-                                    // for ringct its not possible to know for sure amount
-                                    // in key image without spend key, so we just use all
-                                    // for regular/old txs there must be also a match
-                                    // in amounts, not only in output public keys
-                                    if (mixin_tx.version < 2 && amount == in_key.amount)
-                                    {
-                                        sum_mixin_xmr += amount;
-                                    }
-                                    else if (mixin_tx.version == 2) // ringct
-                                    {
-                                        sum_mixin_xmr += amount;
-                                        ringct_amount += amount;
-                                    }
-
-                                    no_of_matched_mixins++;
-                                }
-
-                                // generate key_image using this output
-                                // just to see how would having spend keys worked
-                                //                        crypto::key_image key_img;
-                                //
-                                //                        if (!xmreg::generate_key_image(derivation,
-                                //                                                       output_idx_in_tx, /* position in the tx */
-                                //                                                       prv_spend_key,
-                                //                                                       address.m_spend_public_key,
-                                //                                                       key_img)) {
-                                //                            cerr << "Cant generate key image for output: "
-                                //                                 << pod_to_hex(output_data.pubkey) << endl;
-                                //                            break;
-                                //                        }
-                                //
-                                //                        cout    << "output_data.pubkey: " << pod_to_hex(output_data.pubkey)
-                                //                                << ", key_img: " << pod_to_hex(key_img)
-                                //                                << ", key_img == input_key: " << (key_img == in_key.k_image)
-                                //                                << endl;
-
-                                no_of_output_matches_found++;
-
-                            } // if (mine_output)
-
-                        } // for (const pair<public_key, uint64_t>& mix_out: txd.output_pub_keys)
-
-                        has_found_outputs = !found_outputs.empty();
-
-                        has_mixin_outputs = found_something;
-
-                        //   all_possible_mixins_amount += amount;
-
-                        if (found_something)
-                            all_possible_mixins.push_back(
-                                {mixin_tx_pub_key,
-                                 in_key.amount == 0 ? ringct_amount : in_key.amount});
-
-                        ++count;
-
-                    } // for (const cryptonote::output_data_t& output_data: mixin_outputs)
-
-                } //  for (const txin_to_key& in_key: input_key_imgs)
-
-                context.emplace("inputs", inputs);
-
-                context["show_inputs"] = show_key_images;
-                context["inputs_no"] = static_cast<uint64_t>(inputs.size());
-                context["sum_mixin_xmr"] = xmreg::xmr_amount_to_str(
-                    sum_mixin_xmr, "{:0.12f}", false);
-
-                uint64_t possible_spending{0};
-
-                // cout << "\nall_possible_mixins: " << all_possible_mixins.size() << '\n';
-
-                // useful for unit testing as it provides total xmr sum
-                // of possible mixins
-                uint64_t all_possible_mixins_amount1{0};
-
-                for (auto &p : all_possible_mixins)
-                    all_possible_mixins_amount1 += p.second;
-
-                // cout << "\all_possible_mixins_amount: " << all_possible_mixins_amount1 << '\n';
-
-                // cout << "\nmixins: " << mix << '\n';
-
-                context["no_all_possible_mixins"] = static_cast<uint64_t>(all_possible_mixins.size());
-                context["all_possible_mixins_amount"] = all_possible_mixins_amount1;
-
-                // show spending only if sum of mixins is more than
-                // what we get + fee, and number of perferctly matched
-                // mixis is equal to number of inputs
-                if (sum_mixin_xmr > (sum_xmr + txd.fee) && no_of_matched_mixins == inputs.size())
-                {
-                    //                  (outcoming    - incoming) - fee
-                    possible_spending = (sum_mixin_xmr - sum_xmr) - txd.fee;
-                }
-
-                context["possible_spending"] = xmreg::xmr_amount_to_str(
-                    possible_spending, "{:0.12f}", false);
-
-            } // if (enable_mixin_guess)
-
-            add_css_style(context);
-
-            // render the page
-            return mstch::render(template_file["my_outputs"], context);
-        }
-
-
-/jed **********************************************************
-
         string
         show_prove(string tx_hash_str,
                    string xmr_address_str,
@@ -4187,6 +3365,656 @@ namespace xmreg
             // render the page
             return mstch::render(full_page, context, partials);
         }
+
+// jed *************************************************************
+
+    
+//        show_prove(string tx_hash_str,
+        show_public(string tx_hash_str,
+                   string xmr_address_str,
+                   string tx_prv_key_str,
+                   string const &raw_tx_data,
+                   string domain)
+        {
+
+            return show_my_outputs(tx_hash_str, xmr_address_str,
+                                   tx_prv_key_str, raw_tx_data,
+                                   domain, true);
+        }
+
+        string
+        show_rawtx()
+        {
+
+            // initalise page tempate map with basic info about blockchain
+            mstch::map context{
+                {"testnet", testnet},
+                {"stagenet", stagenet}};
+
+            add_css_style(context);
+
+            // render the page
+            return mstch::render(template_file["rawtx"], context);
+        }
+
+        string
+        show_checkrawtx(string raw_tx_data, string action)
+        {
+
+            clean_post_data(raw_tx_data);
+
+            string decoded_raw_tx_data = epee::string_encoding::base64_decode(raw_tx_data);
+
+            // cout << decoded_raw_tx_data << endl;
+
+            const size_t magiclen = strlen(UNSIGNED_TX_PREFIX);
+
+            string data_prefix = xmreg::make_printable(decoded_raw_tx_data.substr(0, magiclen));
+
+            bool unsigned_tx_given{false};
+
+            if (strncmp(decoded_raw_tx_data.c_str(), UNSIGNED_TX_PREFIX, magiclen) == 0)
+            {
+                unsigned_tx_given = true;
+            }
+
+            // initalize page template context map
+            mstch::map context{
+                {"testnet", testnet},
+                {"stagenet", stagenet},
+                {"unsigned_tx_given", unsigned_tx_given},
+                {"have_raw_tx", true},
+                {"has_error", false},
+                {"error_msg", string{}},
+                {"data_prefix", data_prefix},
+            };
+
+            context.emplace("txs", mstch::array{});
+
+            string full_page = template_file["checkrawtx"];
+
+            add_css_style(context);
+
+            if (unsigned_tx_given)
+            {
+
+                bool r{false};
+
+                string s = decoded_raw_tx_data.substr(magiclen);
+
+                ::tools::wallet2::unsigned_tx_set exported_txs;
+
+                try
+                {
+                    std::istringstream iss(s);
+                    boost::archive::portable_binary_iarchive ar(iss);
+                    ar >> exported_txs;
+
+                    r = true;
+                }
+                catch (...)
+                {
+                    cerr << "Failed to parse unsigned tx data " << endl;
+                }
+
+                if (r)
+                {
+                    mstch::array &txs = boost::get<mstch::array>(context["txs"]);
+
+                    for (const ::tools::wallet2::tx_construction_data &tx_cd : exported_txs.txes)
+                    {
+                        size_t no_of_sources = tx_cd.sources.size();
+
+                        const tx_destination_entry &tx_change = tx_cd.change_dts;
+
+                        crypto::hash payment_id = null_hash;
+                        crypto::hash8 payment_id8 = null_hash8;
+
+                        get_payment_id(tx_cd.extra, payment_id, payment_id8);
+
+                        // payments id. both normal and encrypted (payment_id8)
+                        string pid_str = REMOVE_HASH_BRAKETS(fmt::format("{:s}", payment_id));
+                        string pid8_str = REMOVE_HASH_BRAKETS(fmt::format("{:s}", payment_id8));
+
+                        mstch::map tx_cd_data{
+                            {"no_of_sources", static_cast<uint64_t>(no_of_sources)},
+                            {"use_rct", tx_cd.use_rct},
+                            {"change_amount", xmreg::xmr_amount_to_str(tx_change.amount)},
+                            {"has_payment_id", (payment_id != null_hash)},
+                            {"has_payment_id8", (payment_id8 != null_hash8)},
+                            {"payment_id", pid_str},
+                            {"payment_id8", pid8_str},
+                        };
+                        tx_cd_data.emplace("dest_sources", mstch::array{});
+                        tx_cd_data.emplace("dest_infos", mstch::array{});
+
+                        mstch::array &dest_sources = boost::get<mstch::array>(tx_cd_data["dest_sources"]);
+                        mstch::array &dest_infos = boost::get<mstch::array>(tx_cd_data["dest_infos"]);
+
+                        for (const tx_destination_entry &a_dest : tx_cd.splitted_dsts)
+                        {
+                            mstch::map dest_info{
+                                {"dest_address", get_account_address_as_str(
+                                                     nettype, a_dest.is_subaddress, a_dest.addr)},
+                                {"dest_amount", xmreg::xmr_amount_to_str(a_dest.amount)}};
+
+                            dest_infos.push_back(dest_info);
+                        }
+
+                        vector<vector<uint64_t>> mixin_timestamp_groups;
+                        vector<uint64_t> real_output_indices;
+
+                        uint64_t sum_outputs_amounts{0};
+
+                        for (size_t i = 0; i < no_of_sources; ++i)
+                        {
+
+                            const tx_source_entry &tx_source = tx_cd.sources.at(i);
+
+                            mstch::map single_dest_source{
+                                {"output_amount", xmreg::xmr_amount_to_str(tx_source.amount)},
+                                {"real_output", static_cast<uint64_t>(tx_source.real_output)},
+                                {"real_out_tx_key", pod_to_hex(tx_source.real_out_tx_key)},
+                                {"real_output_in_tx_index", static_cast<uint64_t>(tx_source.real_output_in_tx_index)},
+                            };
+                            single_dest_source.emplace("outputs", mstch::array{});
+
+                            sum_outputs_amounts += tx_source.amount;
+
+                            // cout << "tx_source.real_output: "             << tx_source.real_output << endl;
+                            // cout << "tx_source.real_out_tx_key: "         << tx_source.real_out_tx_key << endl;
+                            // cout << "tx_source.real_output_in_tx_index: " << tx_source.real_output_in_tx_index << endl;
+
+                            uint64_t index_of_real_output = tx_source.outputs[tx_source.real_output].first;
+
+                            tx_out_index real_toi;
+
+                            uint64_t tx_source_amount = (tx_source.rct ? 0 : tx_source.amount);
+
+                            try
+                            {
+                                // get tx of the real output
+                                real_toi = core_storage->get_db()
+                                               .get_output_tx_and_index(tx_source_amount,
+                                                                        index_of_real_output);
+                            }
+                            catch (const OUTPUT_DNE &e)
+                            {
+
+                                string out_msg = fmt::format(
+                                    "Output with amount {:d} and index {:d} does not exist!",
+                                    tx_source_amount, index_of_real_output);
+
+                                cerr << out_msg << endl;
+
+                                return string(out_msg);
+                            }
+
+                            transaction real_source_tx;
+
+                            if (!mcore->get_tx(real_toi.first, real_source_tx))
+                            {
+                                cerr << "Cant get tx in blockchain: " << real_toi.first << endl;
+                                return string("Cant get tx: " + pod_to_hex(real_toi.first));
+                            }
+
+                            tx_details real_txd = get_tx_details(real_source_tx);
+
+                            real_output_indices.push_back(tx_source.real_output);
+
+                            public_key real_out_pub_key = std::get<0>(real_txd.output_pub_keys[tx_source.real_output_in_tx_index]);
+
+                            // cout << "real_txd.hash: "    << pod_to_hex(real_txd.hash) << endl;
+                            // cout << "real_txd.pk: "      << pod_to_hex(real_txd.pk) << endl;
+                            // cout << "real_out_pub_key: " << pod_to_hex(real_out_pub_key) << endl;
+
+                            mstch::array &outputs = boost::get<mstch::array>(single_dest_source["outputs"]);
+
+                            vector<uint64_t> mixin_timestamps;
+
+                            size_t output_i{0};
+
+                            for (const tx_source_entry::output_entry &oe : tx_source.outputs)
+                            {
+
+                                tx_out_index toi;
+
+                                try
+                                {
+
+                                    // get tx of the real output
+                                    toi = core_storage->get_db()
+                                              .get_output_tx_and_index(tx_source_amount, oe.first);
+                                }
+                                catch (OUTPUT_DNE &e)
+                                {
+
+                                    string out_msg = fmt::format(
+                                        "Output with amount {:d} and index {:d} does not exist!",
+                                        tx_source_amount, oe.first);
+
+                                    cerr << out_msg << endl;
+
+                                    return string(out_msg);
+                                }
+
+                                transaction tx;
+
+                                if (!mcore->get_tx(toi.first, tx))
+                                {
+                                    cerr << "Cant get tx in blockchain: " << toi.first
+                                         << ". \n Check mempool now" << endl;
+                                    // tx is nowhere to be found :-(
+                                    return string("Cant get tx: " + pod_to_hex(toi.first));
+                                }
+
+                                tx_details txd = get_tx_details(tx);
+
+                                public_key out_pub_key = std::get<0>(txd.output_pub_keys[toi.second]);
+
+                                // get block cointaining this tx
+                                block blk;
+
+                                if (!mcore->get_block_by_height(txd.blk_height, blk))
+                                {
+                                    cerr << "Cant get block: " << txd.blk_height << endl;
+                                    return string("Cant get block: " + to_string(txd.blk_height));
+                                }
+
+                                pair<string, string> age = get_age(server_timestamp, blk.timestamp);
+
+                                mstch::map single_output{
+                                    {"out_index", oe.first},
+                                    {"tx_hash", pod_to_hex(txd.hash)},
+                                    {"out_pub_key", pod_to_hex(out_pub_key)},
+                                    {"ctkey", pod_to_hex(oe.second)},
+                                    {"output_age", age.first},
+                                    {"is_real", (out_pub_key == real_out_pub_key)}};
+
+                                single_dest_source.insert({"age_format", age.second});
+
+                                outputs.push_back(single_output);
+
+                                mixin_timestamps.push_back(blk.timestamp);
+
+                                ++output_i;
+
+                            } // for(const tx_source_entry::output_entry& oe: tx_source.outputs)
+
+                            dest_sources.push_back(single_dest_source);
+
+                            mixin_timestamp_groups.push_back(mixin_timestamps);
+
+                        } //  for (size_t i = 0; i < no_of_sources; ++i)
+
+                        tx_cd_data.insert({"sum_outputs_amounts",
+                                           xmreg::xmr_amount_to_str(sum_outputs_amounts)});
+
+                        uint64_t min_mix_timestamp;
+                        uint64_t max_mix_timestamp;
+
+                        pair<mstch::array, double> mixins_timescales = construct_mstch_mixin_timescales(
+                            mixin_timestamp_groups,
+                            min_mix_timestamp,
+                            max_mix_timestamp);
+
+                        tx_cd_data.emplace("timescales", mixins_timescales.first);
+                        tx_cd_data["min_mix_time"] = xmreg::timestamp_to_str_gm(min_mix_timestamp);
+                        tx_cd_data["max_mix_time"] = xmreg::timestamp_to_str_gm(max_mix_timestamp);
+                        tx_cd_data["timescales_scale"] = fmt::format("{:0.2f}",
+                                                                     mixins_timescales.second / 3600.0 / 24.0); // in days
+
+                        // mark real mixing in the mixins timescale graph
+                        mark_real_mixins_on_timescales(real_output_indices, tx_cd_data);
+
+                        txs.push_back(tx_cd_data);
+
+                    } // for (const ::tools::wallet2::tx_construction_data& tx_cd: exported_txs.txes)
+                }
+                else
+                {
+                    cerr << "deserialization of unsigned tx data NOT successful" << endl;
+                    return string("deserialization of unsigned tx data NOT successful. "
+                                  "Maybe its not base64 encoded?");
+                }
+            } // if (unsigned_tx_given)
+            else
+            {
+                // if raw data is not unsigined tx, then assume it is signed tx
+
+                const size_t magiclen = strlen(SIGNED_TX_PREFIX);
+
+                string data_prefix = xmreg::make_printable(decoded_raw_tx_data.substr(0, magiclen));
+
+                if (strncmp(decoded_raw_tx_data.c_str(), SIGNED_TX_PREFIX, magiclen) != 0)
+                {
+
+                    // ok, so its not signed tx data. but maybe it is raw tx data
+                    // used in rpc call "/sendrawtransaction". This is for example
+                    // used in mymonero and openmonero projects.
+
+                    // to check this, first we need to encode data back to base64.
+                    // the reason is that txs submited to "/sendrawtransaction"
+                    // are not base64, and we earlier always asume it is base64.
+
+                    // string reencoded_raw_tx_data = epee::string_encoding::base64_decode(raw_tx_data);
+
+                    // cout << "raw_tx_data: " << raw_tx_data << endl;
+
+                    cryptonote::blobdata tx_data_blob;
+
+                    if (!epee::string_tools::parse_hexstr_to_binbuff(raw_tx_data, tx_data_blob))
+                    {
+                        string msg = fmt::format("The data is neither unsigned, signed tx or raw tx! "
+                                                 "Its prefix is: {:s}",
+                                                 data_prefix);
+
+                        cerr << msg << endl;
+
+                        return string(msg);
+                    }
+
+                    crypto::hash tx_hash_from_blob;
+                    crypto::hash tx_prefix_hash_from_blob;
+                    cryptonote::transaction tx_from_blob;
+
+                    //                std::stringstream ss;
+                    //                ss << tx_data_blob;
+                    //                binary_archive<false> ba(ss);
+                    //                serialization::serialize(ba, tx_from_blob);
+
+                    if (!cryptonote::parse_and_validate_tx_from_blob(tx_data_blob,
+                                                                     tx_from_blob,
+                                                                     tx_hash_from_blob,
+                                                                     tx_prefix_hash_from_blob))
+                    {
+                        string error_msg = fmt::format("failed to validate transaction");
+
+                        context["has_error"] = true;
+                        context["error_msg"] = error_msg;
+
+                        return mstch::render(full_page, context);
+                    }
+
+                    // cout << "tx_from_blob.vout.size(): " << tx_from_blob.vout.size() << endl;
+
+                    // tx has been correctly deserialized. So
+                    // we just dispaly it. We dont have any information about real mixins, etc,
+                    // so there is not much more we can do with tx data.
+
+                    mstch::map tx_context = construct_tx_context(tx_from_blob);
+
+                    if (boost::get<bool>(tx_context["has_error"]))
+                    {
+                        return boost::get<string>(tx_context["error_msg"]);
+                    }
+
+                    // this will be stored in html for for checking outputs
+                    // we need this data if we want to use "Decode outputs"
+                    // to see which outputs are ours, and decode amounts in ringct txs
+                    tx_context["raw_tx_data"] = raw_tx_data;
+                    tx_context["show_more_details_link"] = false;
+
+                    context["data_prefix"] = string("none as this is pure raw tx data");
+                    context["tx_json"] = obj_to_json_str(tx_from_blob);
+
+                    context.emplace("txs", mstch::array{});
+
+                    boost::get<mstch::array>(context["txs"]).push_back(tx_context);
+
+                    map<string, string> partials{
+                        {"tx_details", template_file["tx_details"]},
+                    };
+
+                    add_css_style(context);
+
+                    // render the page
+                    return mstch::render(template_file["checkrawtx"], context, partials);
+
+                } // if (strncmp(decoded_raw_tx_data.c_str(), SIGNED_TX_PREFIX, magiclen) != 0)
+
+                context["data_prefix"] = data_prefix;
+
+                bool r{false};
+
+                string s = decoded_raw_tx_data.substr(magiclen);
+
+                ::tools::wallet2::signed_tx_set signed_txs;
+
+                try
+                {
+                    std::istringstream iss(s);
+                    boost::archive::portable_binary_iarchive ar(iss);
+                    ar >> signed_txs;
+
+                    r = true;
+                }
+                catch (...)
+                {
+                    cerr << "Failed to parse signed tx data " << endl;
+                }
+
+                if (!r)
+                {
+                    cerr << "deserialization of signed tx data NOT successful" << endl;
+                    return string("deserialization of signed tx data NOT successful. "
+                                  "Maybe its not base64 encoded?");
+                }
+
+                std::vector<tools::wallet2::pending_tx> ptxs = signed_txs.ptx;
+
+                context.insert({"txs", mstch::array{}});
+
+                for (tools::wallet2::pending_tx &ptx : ptxs)
+                {
+                    mstch::map tx_context = construct_tx_context(ptx.tx, 1);
+
+                    if (boost::get<bool>(tx_context["has_error"]))
+                    {
+                        return boost::get<string>(tx_context["error_msg"]);
+                    }
+
+                    tx_context["tx_prv_key"] = fmt::format("{:s}", ptx.tx_key);
+
+                    mstch::array destination_addresses;
+                    vector<uint64_t> real_ammounts;
+                    uint64_t outputs_xmr_sum{0};
+
+                    // destiantion address for this tx
+                    for (tx_destination_entry &a_dest : ptx.construction_data.splitted_dsts)
+                    {
+                        // stealth_address_amount.insert({dest.addr, dest.amount});
+                        // cout << get_account_address_as_str(testnet, a_dest.addr) << endl;
+                        // address_amounts.push_back(a_dest.amount);
+
+                        destination_addresses.push_back(
+                            mstch::map{
+                                {"dest_address", get_account_address_as_str(
+                                                     nettype, a_dest.is_subaddress, a_dest.addr)},
+                                {"dest_amount", xmreg::xmr_amount_to_str(a_dest.amount)},
+                                {"is_this_change", false}});
+
+                        outputs_xmr_sum += a_dest.amount;
+
+                        real_ammounts.push_back(a_dest.amount);
+                    }
+
+                    // get change address and amount info
+                    if (ptx.construction_data.change_dts.amount > 0)
+                    {
+                        destination_addresses.push_back(
+                            mstch::map{
+                                {"dest_address", get_account_address_as_str(
+                                                     nettype, ptx.construction_data.change_dts.is_subaddress, ptx.construction_data.change_dts.addr)},
+                                {"dest_amount",
+                                 xmreg::xmr_amount_to_str(ptx.construction_data.change_dts.amount)},
+                                {"is_this_change", true}});
+
+                        real_ammounts.push_back(ptx.construction_data.change_dts.amount);
+                    };
+
+                    tx_context["outputs_xmr_sum"] = xmreg::xmr_amount_to_str(outputs_xmr_sum);
+
+                    tx_context.insert({"dest_infos", destination_addresses});
+
+                    // get reference to inputs array created of the tx
+                    mstch::array &outputs = boost::get<mstch::array>(tx_context["outputs"]);
+
+                    // show real output amount for ringct outputs.
+                    // otherwise its only 0.000000000
+                    for (size_t i = 0; i < outputs.size(); ++i)
+                    {
+                        mstch::map &output_map = boost::get<mstch::map>(outputs.at(i));
+
+                        string &out_amount_str = boost::get<string>(output_map["amount"]);
+
+                        // cout << boost::get<string>(output_map["out_pub_key"])
+                        //     <<", " <<  out_amount_str << endl;
+
+                        uint64_t output_amount;
+
+                        if (parse_amount(output_amount, out_amount_str))
+                        {
+                            if (output_amount == 0)
+                            {
+                                out_amount_str = xmreg::xmr_amount_to_str(real_ammounts.at(i));
+                            }
+                        }
+                    }
+
+                    // get public keys of real outputs
+                    vector<string> real_output_pub_keys;
+                    vector<uint64_t> real_output_indices;
+                    vector<uint64_t> real_amounts;
+
+                    uint64_t inputs_xmr_sum{0};
+
+                    for (const tx_source_entry &tx_source : ptx.construction_data.sources)
+                    {
+                        transaction real_source_tx;
+
+                        uint64_t index_of_real_output = std::get<0>(tx_source.outputs[tx_source.real_output]);
+
+                        uint64_t tx_source_amount = (tx_source.rct ? 0 : tx_source.amount);
+
+                        tx_out_index real_toi;
+
+                        try
+                        {
+                            // get tx of the real output
+                            real_toi = core_storage->get_db()
+                                           .get_output_tx_and_index(tx_source_amount, index_of_real_output);
+                        }
+                        catch (const OUTPUT_DNE &e)
+                        {
+
+                            string out_msg = fmt::format(
+                                "Output with amount {:d} and index {:d} does not exist!",
+                                tx_source_amount, index_of_real_output);
+
+                            cerr << out_msg << endl;
+
+                            return string(out_msg);
+                        }
+
+                        if (!mcore->get_tx(real_toi.first, real_source_tx))
+                        {
+                            cerr << "Cant get tx in blockchain: " << real_toi.first << endl;
+                            return string("Cant get tx: " + pod_to_hex(real_toi.first));
+                        }
+
+                        tx_details real_txd = get_tx_details(real_source_tx);
+
+                        public_key real_out_pub_key = std::get<0>(real_txd.output_pub_keys[tx_source.real_output_in_tx_index]);
+
+                        real_output_pub_keys.push_back(
+                            REMOVE_HASH_BRAKETS(fmt::format("{:s}", real_out_pub_key)));
+
+                        real_output_indices.push_back(tx_source.real_output);
+                        real_amounts.push_back(tx_source.amount);
+
+                        inputs_xmr_sum += tx_source.amount;
+                    }
+
+                    // mark that we have signed tx data for use in mstch
+                    tx_context["have_raw_tx"] = true;
+
+                    // provide total mount of inputs xmr
+                    tx_context["inputs_xmr_sum"] = xmreg::xmr_amount_to_str(inputs_xmr_sum);
+
+                    // get reference to inputs array created of the tx
+                    mstch::array &inputs = boost::get<mstch::array>(tx_context["inputs"]);
+
+                    uint64_t input_idx{0};
+
+                    // mark which mixin is real in each input's mstch context
+                    for (mstch::node &input_node : inputs)
+                    {
+
+                        mstch::map &input_map = boost::get<mstch::map>(input_node);
+
+                        // show input amount
+                        string &amount = boost::get<string>(
+                            boost::get<mstch::map>(input_node)["amount"]);
+
+                        amount = xmreg::xmr_amount_to_str(real_amounts.at(input_idx));
+
+                        // check if key images are spend or not
+
+                        string &in_key_img_str = boost::get<string>(
+                            boost::get<mstch::map>(input_node)["in_key_img"]);
+
+                        key_image key_imgage;
+
+                        if (epee::string_tools::hex_to_pod(in_key_img_str, key_imgage))
+                        {
+                            input_map["already_spent"] = core_storage->get_db().has_key_image(key_imgage);
+                        }
+
+                        // mark real mixings
+
+                        mstch::array &mixins = boost::get<mstch::array>(
+                            boost::get<mstch::map>(input_node)["mixins"]);
+
+                        for (mstch::node &mixin_node : mixins)
+                        {
+                            mstch::map &mixin = boost::get<mstch::map>(mixin_node);
+
+                            string mix_pub_key_str = boost::get<string>(mixin["mix_pub_key"]);
+
+                            // cout << mix_pub_key_str << endl;
+
+                            if (std::find(
+                                    real_output_pub_keys.begin(),
+                                    real_output_pub_keys.end(),
+                                    mix_pub_key_str) != real_output_pub_keys.end())
+                            {
+                                mixin["mix_is_it_real"] = true;
+                            }
+                        }
+
+                        ++input_idx;
+                    }
+
+                    // mark real mixing in the mixins timescale graph
+                    mark_real_mixins_on_timescales(real_output_indices, tx_context);
+
+                    boost::get<mstch::array>(context["txs"]).push_back(tx_context);
+                }
+            }
+
+            map<string, string> partials{
+                {"tx_details", template_file["tx_details"]},
+            };
+
+            // render the page
+            return mstch::render(full_page, context, partials);
+        }
+
+
+// jed *************************************************************
+
+
 
         string
         show_pushrawtx(string raw_tx_data, string action)
