@@ -324,7 +324,6 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
-// jed
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -2115,8 +2114,6 @@ namespace xmreg
             string pid_str = pod_to_hex(txd.payment_id);
             string pid8_str = pod_to_hex(txd.payment_id8);
 
-// jed - need to fix
-
             string shortcut_url = tx_prove
                                       ? string("/prove")
                                       : string("/myoutputs") + '/' + tx_hash_str + '/' + xmr_address_str + '/' + viewkey_str;
@@ -3371,10 +3368,7 @@ namespace xmreg
             return mstch::render(full_page, context, partials);
         }
 
-// jed *************************************************************
-
         string
-//        show_prove(string tx_hash_str,
         show_public(string tx_hash_str,
                    string xmr_address_str,
                    string tx_prv_key_str,
@@ -3383,16 +3377,10 @@ namespace xmreg
                    string from_address_st)
         {
 
-            cout << "from_address_st " << from_address_st << endl;
-
             return show_my_outputs(tx_hash_str, xmr_address_str,
                                    tx_prv_key_str, raw_tx_data,
                                    domain, true, from_address_st);
         }
-
-// jed *************************************************************
-
-
 
         string
         show_pushrawtx(string raw_tx_data, string action)
