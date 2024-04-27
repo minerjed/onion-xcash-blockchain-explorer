@@ -507,10 +507,6 @@ namespace xmreg
                         wcnt++;
                         if (wcnt == index)
                         {
-// jed
-//                            std::string x;
-//                            x = std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
-//                            std::cout << "indx=" << wcnt << "str=" << x << std::endl;
                             return std::string{reinterpret_cast<const char *>(printer.get_stored_value().data()), printer.get_stored_value().size()};
                         }
                     }
@@ -1361,7 +1357,6 @@ namespace xmreg
             return mstch::render(template_file["randomx"], context);
         }
 
-// jed *****************************************************************************
         string
         show_tx(string tx_hash_str, uint16_t with_ring_signatures = 0, bool refresh_page = false)
         {
@@ -1919,8 +1914,6 @@ namespace xmreg
             return tx_json;
         }
 
-
-// jed *****************************************************************************
         string
         show_my_outputs(string tx_hash_str,
                         string xmr_address_str,

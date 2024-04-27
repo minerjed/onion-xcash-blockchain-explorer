@@ -527,6 +527,21 @@ main(int ac, const char* av[])
                                     domain));
     });
 
+    CROW_ROUTE(app, "/public/<string>/<string>/<string>")
+    ([&](const crow::request& req, string tx_hash,
+         string xmr_address, string tx_prv_key) 
+     {
+
+        string domain = get_domain(req);
+
+        return myxmr::htmlresponse(xmrblocks.show_prove(
+                                    remove_bad_chars(tx_hash),
+                                    remove_bad_chars(xmr_address),
+                                    remove_bad_chars(tx_prv_key),
+                                    string {},
+                                    domain));
+    });
+
     if (enable_pusher)
     {
         CROW_ROUTE(app, "/rawtx")
