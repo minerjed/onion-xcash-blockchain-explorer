@@ -52,12 +52,6 @@
         </tr>
 
         {{#extra_pub_txId}}
-        <tr>
-            <td colspan="3" style="max-width:700px">From: {{extra_pub_txFrom}}</td>
-        </tr>
-        <tr>
-            <td colspan="3" style="max-width:700px">To: {{extra_pub_txTo}}</td>
-        </tr>
         <tr><td>
         <form action="/public" method="post" style="width:100%;margin-top:2px" class="style-1">
             <input type="hidden" name="txhash" value="{{tx_hash}}"><br/>
