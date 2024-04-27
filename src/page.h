@@ -1920,7 +1920,8 @@ namespace xmreg
                         string viewkey_str, /* or tx_prv_key_str when tx_prove == true */
                         string raw_tx_data,
                         string domain,
-                        bool tx_prove = false)
+                        bool tx_prove = false,
+                        string from_address = "")
         {
 
             // remove white characters
