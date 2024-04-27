@@ -1383,6 +1383,9 @@ namespace xmreg
             // get transaction
             transaction tx;
 
+            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
+            std::cout << "flag=" << flagAsString << std::endl;
+
             bool show_more_details_link{true};
 
             if (!mcore->get_tx(tx_hash, tx))
@@ -2080,11 +2083,6 @@ namespace xmreg
             }
 
             tx_details txd = get_tx_details(tx);
-
-// jed jed
-
-            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
-            std::cout << "flag=" << flagAsString << std::endl;
 
             uint64_t tx_blk_height{0};
 
