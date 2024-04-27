@@ -637,15 +637,17 @@ main(int ac, const char* av[])
 
             if (post_body.count("xmraddress") == 0
                 || post_body.count("txprvkey") == 0
-                || post_body.count("txhash") == 0)
+                || post_body.count("txhash") == 0
+                || post_body.count("fromaddress") == 0)
             {
-                return string("xmr address, tx private key or "
+                return string("to address, from address, tx private key or "
                                       "tx hash not provided");
             }
 
             string tx_hash     = remove_bad_chars(post_body["txhash"]);
             string tx_prv_key  = remove_bad_chars(post_body["txprvkey"]);
             string xmr_address = remove_bad_chars(post_body["xmraddress"]);
+            string from_address = remove_bad_chars(post_body["fromaddress"]);
 
             // this will be only not empty when checking raw tx data
             // using tx pusher
@@ -657,10 +659,10 @@ main(int ac, const char* av[])
                                         xmr_address,
                                         tx_prv_key,
                                         raw_tx_data,
-                                        domain));
+                                        domain, from_address));
     });
 
-    CROW_ROUTE(app, "/public/<string>/<string>/<string>")
+    CROW_ROUTE(app, "/public/<string>/<string>/<string>/<string>")
     ([&](const crow::request& req, string tx_hash,
          string xmr_address, string tx_prv_key) 
      {
