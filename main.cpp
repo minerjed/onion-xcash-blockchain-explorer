@@ -661,7 +661,7 @@ main(int ac, const char* av[])
                                         raw_tx_data,
                                         domain, from_address));
     });
-
+/*
     CROW_ROUTE(app, "/public/<string>/<string>/<string>/<string>")
     ([&](const crow::request& req, string tx_hash,
          string xmr_address, string tx_prv_key) 
@@ -776,7 +776,7 @@ main(int ac, const char* av[])
                     xmrblocks.show_checkcheckrawoutput(raw_data, viewkey));
         });
     }
-
+*/
 // jed ******************************************************
 
     CROW_ROUTE(app, "/search").methods("GET"_method)
