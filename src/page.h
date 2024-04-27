@@ -1102,9 +1102,6 @@ namespace xmreg
         string
         show_block(uint64_t _blk_height)
         {
-            //jed
-           std::cout << "show_tx" << std::endl;
-
             // get block at the given height i
             block blk;
 
@@ -1386,10 +1383,9 @@ namespace xmreg
             // get transaction
             transaction tx;
 
-//            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
-//            std::cout << "flag=" << flagAsString << std::endl;
 //jed
-           std::cout << "xshow_tx" << std::endl;
+            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
+            std::cout << "flag=" << flagAsString << std::endl;
 
             bool show_more_details_link{true};
 
