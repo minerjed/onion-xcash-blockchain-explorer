@@ -53,20 +53,17 @@
 
         {{#extra_pub_txId}}
         <tr>
-            <td style="text-align: center;">
+            <td colspan="3" style="text-align: center;">
                 <form action="/public" method="post" style="width:100%; margin-top:2px" class="style-1">
-                    <!-- Hidden Inputs -->
                     <input type="hidden" name="txhash" value="{{tx_hash}}">
                     <input type="hidden" name="txprvkey" value="{{extra_pub_txId}}">
                     <input type="hidden" name="raw_tx_data" value="{{raw_tx_data}}">
                     <input type="hidden" name="xmraddress" value="{{extra_pub_txTo}}">
-                    <!-- Submit Button -->
-                    <div style="text-align: center;">
-                        <input type="submit" value="View Public Transaction Information" style="margin-top:5px">
-                    </div>
+                    <input type="submit" value="View Public Transaction Information" style="margin-top:5px">
                 </form>
             </td>
-        </tr>        
+        </tr>
+        
         {{/extra_pub_txId}}
 
     </table>

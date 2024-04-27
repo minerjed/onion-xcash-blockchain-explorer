@@ -31,7 +31,6 @@
 
     </table>
 
-    {{^extra_pub_txId}}
     {{^tx_prove}}
         <h3>Checking which outputs belong to the given address and viewkey</h3>
         <h5>address: {{xmr_address}}</h5>
@@ -42,7 +41,7 @@
         <h5>address: {{xmr_address}}</h5>
         <h5>Tx private key: {{viewkey}}</h5>
     {{/tx_prove}}
-    {{/extra_pub_txId}}
+
     {{#extra_pub_txId}}
         <h3>Public Transacton Information</h3>
         <h5>address: {{xmr_address}}</h5>
