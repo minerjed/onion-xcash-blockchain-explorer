@@ -1104,7 +1104,7 @@ namespace xmreg
         {
             //jed
            std::cout << "show_tx" << std::endl;
-           
+
             // get block at the given height i
             block blk;
 
@@ -1389,7 +1389,7 @@ namespace xmreg
 //            std::string flagAsString(reinterpret_cast<const char*>(txd.extra_pub_flag.data()), txd.extra_pub_flag.size());
 //            std::cout << "flag=" << flagAsString << std::endl;
 //jed
-           std::cout << "show_tx" << std::endl;
+           std::cout << "xshow_tx" << std::endl;
 
             bool show_more_details_link{true};
 
