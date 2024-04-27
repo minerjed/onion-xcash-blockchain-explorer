@@ -1420,10 +1420,6 @@ namespace xmreg
                 }
             }
 
-            //jed
-            std::string flagAsString(reinterpret_cast<const char*>(tx.extra_pub_flag.data()), tx.extra_pub_flag.size());
-            std::cout << "flag=" << flagAsString << std::endl;
-
             mstch::map tx_context;
 
             tx_context = construct_tx_context(tx, static_cast<bool>(with_ring_signatures));
@@ -1933,6 +1929,11 @@ namespace xmreg
                         string domain,
                         bool tx_prove = false)
         {
+
+            //jed
+//            std::string flagAsString(reinterpret_cast<const char*>(tx.extra_pub_flag.data()), tx.extra_pub_flag.size());
+//            std::cout << "flag=" << flagAsString << std::endl;
+            std::cout << "Show_my_outputs" << std::endl;
 
             // remove white characters
             boost::trim(tx_hash_str);
