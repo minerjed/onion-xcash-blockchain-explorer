@@ -324,7 +324,7 @@ namespace xmreg
         vector<uint8_t> extra_pub_txSig;
         vector<uint8_t> extra_pub_txTo;
         vector<uint8_t> extra_pub_txFrom;
-
+// jed
         crypto::hash payment_id = null_hash;    // normal
         crypto::hash8 payment_id8 = null_hash8; // encrypted
         std::vector<std::vector<crypto::signature>> signatures;
@@ -3375,12 +3375,15 @@ namespace xmreg
                    string xmr_address_str,
                    string tx_prv_key_str,
                    string const &raw_tx_data,
-                   string domain)
+                   string domain,
+                   string from_address_st)
         {
+
+            cout << "from_address_st " << from_address_st << endl;
 
             return show_my_outputs(tx_hash_str, xmr_address_str,
                                    tx_prv_key_str, raw_tx_data,
-                                   domain, true);
+                                   domain, true, from_address_st);
         }
 
 // jed *************************************************************
