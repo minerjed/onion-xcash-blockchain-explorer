@@ -1921,7 +1921,7 @@ namespace xmreg
                         string raw_tx_data,
                         string domain,
                         bool tx_prove = false,
-                        string from_address = "")
+                        string from_address_str = "")
         {
 
             // remove white characters
@@ -1929,6 +1929,7 @@ namespace xmreg
             boost::trim(xmr_address_str);
             boost::trim(viewkey_str);
             boost::trim(raw_tx_data);
+            boost::trim(from_address_str);
 
             (void)domain; // not used
 
@@ -2114,6 +2115,8 @@ namespace xmreg
             string pid_str = pod_to_hex(txd.payment_id);
             string pid8_str = pod_to_hex(txd.payment_id8);
 
+// jed - need to fix
+
             string shortcut_url = tx_prove
                                       ? string("/prove")
                                       : string("/myoutputs") + '/' + tx_hash_str + '/' + xmr_address_str + '/' + viewkey_str;
@@ -2131,6 +2134,7 @@ namespace xmreg
                 {"tx_hash", tx_hash_str},
                 {"tx_prefix_hash", pod_to_hex(txd.prefix_hash)},
                 {"xmr_address", xmr_address_str},
+                {"from_address", from_address_str},
                 {"viewkey", viewkey_str_partial},
                 {"tx_pub_key", pod_to_hex(txd.pk)},
                 {"blk_height", tx_blk_height_str},
